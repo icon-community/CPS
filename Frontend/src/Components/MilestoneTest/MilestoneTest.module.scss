@@ -1,0 +1,84 @@
+.heading {
+    font-weight: 700;
+    margin-top: 10px;
+    margin-left: 15px;
+    font-size : 20px;
+    margin-bottom: 20px;
+}
+  
+.leftCol {
+    // margin-right: 10px;
+    border-right: 2px solid #ccc;
+    margin-bottom: 10px;
+} 
+
+.icon {
+    font-size: 1.4rem; 
+    margin-top: 0.2rem;
+    margin-right: 0.5rem; /* Add spacing between icon and text */
+    margin-left: 10px;
+    vertical-align: middle; /* Align icon vertically */
+    border-radius: 50%;
+    // color: black;
+}  
+
+.navItem {
+    // background-color: red;
+    width: 100%;
+    // margin-bottom: 20px;  
+}
+
+
+.smallText {
+    font-size: 14px;
+    color: #C0C0C0;
+    // color: red;
+    margin-left: 38px;
+
+    // &:hover {        
+    //     color: white;
+    // }
+}
+
+.rectangle { 
+    font-size: 20px;
+    color: black;
+    border-bottom: 1px solid #ccc;  
+    // background-color: red;
+    width:100%;
+    // flex-wrap: wrap;
+    // margin-left: 50px;
+
+}
+
+.flexColumn {
+    // background-color: red;
+    width :auto;
+}
+
+.description {
+    font-size: 16px;
+    font-weight: 600;
+    margin-left: 10px;
+    margin-top: -5px;
+    // border-left: 1px solid #ccc;
+}
+
+.descContent {
+    font-size: 14px;
+    font-weight: 400;
+    margin-left: 10px;
+    margin-top: 5px;
+    overflow-wrap: break-word;
+}
+
+.rightCol {
+    // border-left: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+
+
+
+  
+

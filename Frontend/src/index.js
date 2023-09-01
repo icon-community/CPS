@@ -15,13 +15,17 @@ import { initialSetup } from './Redux/ICON';
 import history from './Router/history';
 import ScrollToTop from './Helpers/scrollToTop';
 
+import LeftTabsExample from 'Components/MilestoneTest';
+
 initialSetup();
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <Router history={history}>
         <ScrollToTop />
-        <App />
+        {/* <App /> */}
+
+        <LeftTabsExample />
       </Router>
     </Provider>
   </React.StrictMode>,
