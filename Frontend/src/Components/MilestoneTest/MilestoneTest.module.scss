@@ -19,7 +19,8 @@
     margin-left: 10px;
     vertical-align: middle; /* Align icon vertically */
     border-radius: 50%;
-    // color: black;
+    color: white;
+    background-color: green;
 }  
 
 .navItem {
@@ -52,7 +53,7 @@
 }
 
 .flexColumn {
-    // background-color: red;
+    // background-color: red !important;
     width :auto;
 }
 
@@ -76,6 +77,18 @@
     // border-left: 1px solid #ccc;
     margin-bottom: 10px;
 }
+
+.tab {
+    // background-color: red !important;
+
+    :active {
+        background-color:red !important ;
+    }
+}
+
+
+
+
 
 
 

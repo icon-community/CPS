@@ -4,6 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
 import Tab from 'react-bootstrap/Tab';
 import styles from './MilestoneTest.module.scss';
+import './style.css';
 import { FaCircle, FaStar } from 'react-icons/fa';
 import { AiFillStar, AiFillCiCircle } from 'react-icons/ai';
 import { MdStars } from 'react-icons/md';
@@ -33,7 +34,11 @@ function LeftTabsExample() {
         <Row>
           {/* left column */}
           <Col sm={12} md={3} className={styles.leftCol}>
-            <Nav variant='pills' className={styles.flexColumn}>
+            <Nav
+              variant='pills'
+              contentClassName={styles['tab']}
+              className={styles.flexColumn}
+            >
               {milestones.map((milestone, index) => (
                 <Nav.Item key={index} className={styles.navItem}>
                   <Nav.Link
