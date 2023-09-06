@@ -21,6 +21,7 @@ import {
 import styles from './ProposalDetailsPage.module.css';
 import ProgressBar from 'Components/UI/ProgressBar';
 import ProgressText from 'Components/UI/ProgressText';
+import MilestoneList from 'Components/MilestoneTest';
 import {
   FetchProposalDetailRequest,
   fetchProposalDetailRequest,
@@ -496,6 +497,7 @@ function ProposalDetailsPage(props) {
                         />
                       )}
                     </Col>
+                    <MilestoneList />
 
                     {status === 'Voting' && (
                       <Row>

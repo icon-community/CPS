@@ -11,11 +11,8 @@ import 'react-notifications/lib/notifications.css';
 import { Provider } from 'react-redux';
 import store from './Redux/Store/';
 import { initialSetup } from './Redux/ICON';
-
 import history from './Router/history';
 import ScrollToTop from './Helpers/scrollToTop';
-
-import LeftTabsExample from 'Components/MilestoneTest';
 
 initialSetup();
 ReactDOM.render(
@@ -23,9 +20,7 @@ ReactDOM.render(
     <Provider store={store}>
       <Router history={history}>
         <ScrollToTop />
-        {/* <App /> */}
-
-        <LeftTabsExample />
+        <App />
       </Router>
     </Provider>
   </React.StrictMode>,

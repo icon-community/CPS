@@ -1,13 +1,18 @@
+.container {
+    margin-top: 15px;
+    background-color: white;
+}
+
 .heading {
     font-weight: 700;
-    margin-top: 10px;
-    margin-left: 15px;
-    font-size : 20px;
+    margin-top: 15px;
+    margin-left: 20px;
+    font-size : 18px;
     margin-bottom: 20px;
+    padding-top: 10px;
 }
   
 .leftCol {
-    // margin-right: 10px;
     border-right: 2px solid #ccc;
     margin-bottom: 10px;
 } 
@@ -19,37 +24,30 @@
     margin-left: 10px;
     vertical-align: middle; /* Align icon vertically */
     border-radius: 50%;
-    color: white;
-    background-color: green;
+    color: #E9F0F5;
+    background-color: #00563B;
+  
 }  
 
-.navItem {
-    // background-color: red;
-    width: 100%;
-    // margin-bottom: 20px;  
+.navItem {    
+    width: 100%;   
+    margin-left: 10px;     
 }
 
 
 .smallText {
     font-size: 14px;
     color: #C0C0C0;
-    // color: red;
     margin-left: 38px;
-
-    // &:hover {        
-    //     color: white;
-    // }
 }
 
-.rectangle { 
-    font-size: 20px;
+.milestoneName { 
+    font-size: 16px;
     color: black;
     border-bottom: 1px solid #ccc;  
     // background-color: red;
     width:100%;
-    // flex-wrap: wrap;
-    // margin-left: 50px;
-
+    height: 65px;  
 }
 
 .flexColumn {
@@ -70,7 +68,8 @@
     font-weight: 400;
     margin-left: 10px;
     margin-top: 5px;
-    overflow-wrap: break-word;
+    margin-right: 20px;
+    overflow-wrap:normal;
 }
 
 .rightCol {
