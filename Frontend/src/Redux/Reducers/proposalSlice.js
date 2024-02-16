@@ -904,6 +904,7 @@ const proposalSlice = createSlice({
         _contributor_address: proposal[PARAMS.contributorAddress],
         _milestone_count:proposal[PARAMS.milestoneCount],
         _is_milestone:proposal[PARAMS.isMilestone],
+        sponsorAddress: proposal[PARAMS.sponsorAddress],
         // budget: parseInt(proposal[PARAMS.totalBudget]),
         budget: IconConverter.toBigNumber(
           proposal[PARAMS.totalBudget],
