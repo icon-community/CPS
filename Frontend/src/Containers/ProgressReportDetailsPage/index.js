@@ -54,6 +54,7 @@ import {
   getBudgetAdjustmentRejectedPercentage,
   getBudgetAdjustmentRejectedVotersPercentage,
 } from 'Selectors';
+import { IconConverter } from 'icon-sdk-js';
 import { formatDescription, icxFormat } from 'Helpers';
 import ProgressBarCombined from 'Components/Card/ProgressBarCombined';
 import useTimer from 'Hooks/useTimer';
@@ -723,6 +724,7 @@ function ProgressReportDetailsPage(props) {
                         {selectedProgressReportHasMilestone ? (
                           progressDetail?.completedMilestone?.map(
                             (milestone, index) => {
+                              {/* console.log('milestoneId check', IconConverter.toHex(Number(milestone?.id)).toString()) */}
                               // console.log("votes of each milestones",votesByProgressReport.filter(x=>Number(x.milestoneId) === milestone.id))
                               return (
                                 <Container
@@ -741,8 +743,8 @@ function ProgressReportDetailsPage(props) {
                                     name={milestone?.name}
                                     votesByProgressReport={votesByProgressReport?.filter(
                                       x =>
-                                        x?.milestoneId.toString() ===
-                                        milestone?.id,
+                                        x?.milestoneId ===
+                                        IconConverter.toHex(Number(milestone?.id)).toString(),
                                     )}
                                     duration={milestone.completionPeriod}
                                     budget={milestone.budget}

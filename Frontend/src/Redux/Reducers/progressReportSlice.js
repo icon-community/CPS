@@ -296,7 +296,7 @@ fetchProgressReportListRequest(state) {
     fetchVoteResultSuccess(state, action) {
       state.votesByProgressReport = action.payload.response.data.map(vote => ({
         sponsorAddress: vote.address,
-        milestoneId:IconConverter.toBigNumber(vote.milestoneID),
+        milestoneId:(vote.milestoneID),
         status: progressReportMapping.find(
           mapping => mapping.status === vote.vote,
         )?.name,

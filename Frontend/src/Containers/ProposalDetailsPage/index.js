@@ -260,7 +260,7 @@ function ProposalDetailsPage(props) {
   )?.name;
 
   const prepName = preps.find(
-    prep => prep.address == proposalDetail?.sponserPrep,
+    prep => prep.address === proposal?.sponsorAddress,
   )?.name;
 
   useEffect(() => {
@@ -536,7 +536,7 @@ function ProposalDetailsPage(props) {
                           key: 'Sponsor Prep',
                           value: prepName ? (
                             <a
-                              href={`${trackerURL}/${proposalDetail?.sponserPrep}`}
+                              href={`${trackerURL}/${proposal?.sponsorAddress}`}
                               target='_blank'
                               style={{
                                 color: 'var(--proposal-text-color)',
@@ -548,13 +548,13 @@ function ProposalDetailsPage(props) {
                           ) : (
                             (
                               <a
-                                href={`${trackerURL}/${proposalDetail?.sponserPrep}`}
+                                href={`${trackerURL}/${proposal?.sponsorAddress}`}
                                 target='_blank'
                                 style={{
                                   color: 'var(--proposal-text-color)',
                                   textDecoration: 'underline',
                                 }}
-                              >{`${proposalDetail?.sponserPrep?.slice(
+                              >{`${proposal?.sponsorAddress?.slice(
                                 0,
                                 6,
                               )}...`}</a>

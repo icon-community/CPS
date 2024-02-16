@@ -26,7 +26,7 @@ const MilestoneVoteCard = ({
 }) => {
   const [data, setData] = React.useState();
   const params = useParams();
-  // console.log("parameters",votesByProgressReport);
+  console.log("parameters",votesByProgressReport);
   useEffect(() => {
     let isMounted = true;
     try {
@@ -48,7 +48,7 @@ const MilestoneVoteCard = ({
     };
   }, [id]);
 
-  // console.log(data);
+  // console.log("milestone vote result ------------>",data);
 
   return (
     <>
