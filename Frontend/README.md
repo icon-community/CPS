@@ -4,11 +4,17 @@
 
 The CPS is part of the ICON Republic DAO governance. The CPS supports worthy projects through grants from the Contribution Proposal Fund (CPF), which grows through the daily accumulation of block rewards. Learn how to submit a proposal and get paid to contribute to the ICON DAO by working on infrastructure, development, or community activities.
 
+
+## Requirements
+- Node.js = 14.16.1
+
+## Setup
+
 ## Installation
 - Type ```git clone https://github.com/ibriz/CPS.git``` to clone the repository. 
 - Type ```cd CPS``` to navigate into the directory you just cloned.
 - Type ```cd Frontend``` to navigate to the frontend directory.
-- Type ```npm install``` to install all dependencies
+- Type ```npm install or yarn install``` to install all dependencies. NOTE: yarn is preferred.
 - Type ```npm start``` to run the app locally.
 
 ## Folder Structure
