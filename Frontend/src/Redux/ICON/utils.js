@@ -8,24 +8,10 @@ import { signTransaction as signTransactionRequest } from 'Redux/Reducers/accoun
 import frontEndWallet from './FrontEndWallet';
 
 // Mainnet Envs
-export const CPSScore = 'cx9f4ab72f854d3ccdc59aa6f2c3e2215dd62e879f';
-var nid = 1;
-export const provider = new HttpProvider('https://ctz.solidwallet.io/api/v3');
-export const trackerURL = 'https://tracker.icon.community/address';
-
-// Testnet Envs Berlin
-// export const CPSScore = 'cx2fb89997316a8f0d73003c0bb829af319d0df717';
-// var nid = 7;
-// export const trackerURL = 'https://tracker.berlin.icon.community/address';
-// export const provider = new HttpProvider('https://berlin.net.solidwallet.io/api/v3');
-
-// Testnet Envs Lisbon
-// export const CPSScore = 'cxbb9e61ebb174ef6b7d4329cca4ef58ce418a1104';
-// var nid = 2;
-// export const provider = new HttpProvider(
-//   'https://lisbon.net.solidwallet.io/api/v3',
-// );
-// export const trackerURL = 'https://tracker.lisbon.icon.community/address';
+export const CPSScore = process.env.REACT_APP_CPS_SCORE;
+var nid = process.env.REACT_APP_NID;
+export const provider = new HttpProvider(process.env.REACT_APP_PROVIDER);
+export const trackerURL = process.env.REACT_APP_TRACKER_URL;
 
 export const iconService = new IconService(provider);
 
@@ -69,17 +55,10 @@ export async function callKeyStoreWallet({
   method,
   params = {},
 }) {
-  // console.log("check in callkeystore",scoreAddress,method,params)
-  // console.log("cpsTreasuryScoreAddressKeyStore", scoreAddress);
   let callBuilder = new IconBuilder.CallBuilder();
 
   let call = callBuilder.to(scoreAddress).method(method).params(params).build();
-
-  // const provider = new HttpProvider('https://zicon.net.solidwallet.io/api/v3');
-  // console.log("callKeyStoreWallet start");
   const response = await iconService.call(call).execute();
-  // console.log("callKeyStoreWallet");
-  // console.log("response of the callkeystore",response);
   return response;
 }
 
@@ -111,7 +90,6 @@ export function sendTransaction({
     params: IconConverter.toRawTransaction(txnData),
     id: id ? `${constants[id]}` : `${constants[method]}`,
   };
-  console.log('-----------------txnPayload----------------', txnPayload);
   window.parent.dispatchEvent(
     new CustomEvent('ICONEX_RELAY_REQUEST', {
       detail: {
