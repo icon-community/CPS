@@ -113,14 +113,22 @@ async function requestIPFS({ hash }) {
   return response;
 }
 
-const fetchIPFSRetry = async (hash, retries = 3, index = 0) => {
+const fetchIPFSRetry = async (hash, retries = 10, index = 0) => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
   const ipfsUrlList = [
+    'https://ipfs.io/ipfs/{hash}',
+    'https://gateway.pinata.cloud/ipfs/{hash}',
+    'https://{hash}.ipfs.dweb.link/',
+    'https://{hash}.ipfs.4everland.io/',
+    'https://hardbin.com/ipfs/{hash}',
+    'https://ipfs.eth.aragon.network/ipfs/{hash}',
     'https://cloudflare-ipfs.com/ipfs/{hash}',
-    'https://{hash}.ipfs.infura-ipfs.io/',
     'https://gateway.ipfs.io/ipfs/{hash}',
+    'https://{hash}.ipfs.infura-ipfs.io/',
   ];
+
+  
   const requestOptions = {
     method: 'GET',
     redirect: 'follow',
@@ -133,6 +141,7 @@ const fetchIPFSRetry = async (hash, retries = 3, index = 0) => {
       if (res.ok) return res.json();
       if (retries > 0) {
         index = index + 1;
+        console.log(`Retrying fetchIPFS ${index}`)
         return fetchIPFSRetry(hash, retries - 1, index);
       } else {
         throw new Error('Error while fetching records from IPFS');
