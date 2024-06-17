@@ -1,29 +1,20 @@
 import React from 'react';
-import { Row, Col, Container, Button } from 'react-bootstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 import styles from './Footer.module.scss';
 import ClassNames from 'classnames';
 import {
-  AiFillMediumCircle,
   AiFillTwitterCircle,
   AiFillGithub,
-  AiFillFacebook,
-  AiFillRedditCircle,
 } from 'react-icons/ai';
-import { BsSun, BsMoon } from 'react-icons/bs';
+import { BsMoon } from 'react-icons/bs';
 import { MdWbSunny } from 'react-icons/md';
 import { FaDiscord } from 'react-icons/fa';
-import { SiFacebook } from 'react-icons/si';
 import iconCPSImg from '../../Assets/Images/iconCPSlogo-light.svg';
 import iconCPSImgBlack from '../../Assets/Images/iconCPSlogo.svg';
 
 import '../../Theme/variables.css';
 
 const socialLinks = [
-  {
-    name: 'medium',
-    link: 'https://medium.com/helloiconworld',
-    icon: AiFillMediumCircle,
-  },
   {
     name: 'twitter',
     link: 'https://twitter.com/helloiconworld',
@@ -39,21 +30,7 @@ const socialLinks = [
     name: 'github',
     link: 'https://github.com/icon-community/CPS',
     icon: AiFillGithub,
-  },
-
-  {
-    name: 'facebook',
-    link: 'https://www.facebook.com/helloicon/',
-    icon: SiFacebook,
-    fontSize: '30px',
-  },
-
-  {
-    name: 'reddit',
-    link: 'https://www.reddit.com/r/helloicon/',
-    icon: AiFillRedditCircle,
-    // fontSize: '30px'
-  },
+  }
 ];
 
 const resourcesLinks = [
@@ -82,7 +59,7 @@ const ecosystemLinks = [
 
   {
     title: 'Tracker',
-    link: 'https://tracker.icon.foundation/',
+    link: 'https://tracker.icon.community/',
   },
 
   {
@@ -94,20 +71,15 @@ const ecosystemLinks = [
 
 const communityLinks = [
   {
-    title: 'Twitter',
+    title: 'X',
     link: 'https://twitter.com/helloiconworld',
   },
-
   {
     title: 'Discord',
-    link: 'https://discord.gg/4vpFeYams4',
+    link: 'https://discord.gg/b5QvCXJjJM',
   },
-
-  {
-    title: 'Telegram',
-    link: 'https://t.me/hello_iconworld',
-  },
-  { title: 'Medium', link: 'https://medium.com/helloiconworld' },
+  { title: 'Blog', 
+  link: 'https://www.icon.foundation/blog' },
 ];
 
 const Footer = ({ console = false, width = undefined, footerRef }) => {
