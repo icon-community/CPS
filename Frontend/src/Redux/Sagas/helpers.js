@@ -115,15 +115,15 @@ async function requestIPFS({ hash }) {
 
 const fetchIPFSRetry = async (hash, retries = 10, index = 0) => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 4000);
+  const timeoutId = setTimeout(() => controller.abort(), 6000);
   const ipfsUrlList = [
-    'https://ipfs.io/ipfs/{hash}',
-    'https://gateway.pinata.cloud/ipfs/{hash}',
     'https://{hash}.ipfs.dweb.link/',
+    'https://{hash}.ipfs.storry.tv/',
     'https://{hash}.ipfs.4everland.io/',
     'https://hardbin.com/ipfs/{hash}',
     'https://ipfs.eth.aragon.network/ipfs/{hash}',
-    'https://cloudflare-ipfs.com/ipfs/{hash}',
+    'https://ipfs.io/ipfs/{hash}',
+    'https://gateway.pinata.cloud/ipfs/{hash}',
     'https://gateway.ipfs.io/ipfs/{hash}',
     'https://{hash}.ipfs.infura-ipfs.io/',
   ];
