@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {findFutureMonth} from '../../utils'
+import { findFutureMonth } from '../../utils';
 import {
   Row,
   Card,
@@ -53,7 +53,7 @@ import IconService from 'icon-sdk-js';
 
 const signingInfoMessage = (
   <div className='text-information'>
-    <div>Note:</div>
+    <strong>Note:</strong>
     <div className='intendation'>
       1) Make sure you communicate with the Sponsor P-Rep in advance to ensure
       that they will accept your sponsorship request. You can communicate with
@@ -80,6 +80,22 @@ const signingInfoMessage = (
         ii) Second time: to verify the user identity while saving the ipfs hash
         and to submit 50 ICX fee to the blockchain.
       </div>
+    </div>
+  </div>
+);
+const messageToCyrus = (
+  <div className='text-danger'>
+    <strong>Note:</strong>
+    <div className='intendation'>
+      Please contact{' '}
+      <a
+        style={{ color: 'inherit', textDecoration: 'underline' }}
+        href='mailto:cyrus@icon.foundation'
+        target='_blank'
+      >
+        cyrus@icon.foundation
+      </a>{' '}
+      and get sign off from him before submitting.
     </div>
   </div>
 );
@@ -234,7 +250,7 @@ const ProposalCreationPage = ({
   const [remainingBudget, setRemainingBudget] = React.useState(0);
   let [prepList, setPrepList] = React.useState([]);
 
-  const {IconConverter} = IconService;
+  const { IconConverter } = IconService;
 
   useEffect(() => {
     fetchCPFRemainingFundRequest();
@@ -333,14 +349,14 @@ const ProposalCreationPage = ({
   // }, [proposal.milestones, proposal.projectDuration]);
 
   useEffect(() => {
-    const totalMonths =
-      proposal.milestones.reduce(
-        (sum, milestone) => sum + parseInt(milestone.completionPeriod),
-        0,
-      );
+    const totalMonths = proposal.milestones.reduce(
+      (sum, milestone) => sum + parseInt(milestone.completionPeriod),
+      0,
+    );
     setTotalNumberOfMonthsInMilestone(totalMonths);
 
-    const milestoneBudget = proposal.totalBudget - (prePaymentPercentage * proposal.totalBudget);
+    const milestoneBudget =
+      proposal.totalBudget - prePaymentPercentage * proposal.totalBudget;
     setTotalMilestoneBudget(milestoneBudget);
     const inputBudget = proposal.milestones.reduce(
       (sum, milestone) => sum + Number(milestone.budget),
@@ -352,8 +368,8 @@ const ProposalCreationPage = ({
     // console.log(totalInputBudget, totalMilestoneBudget);
     if (proposal.milestones.length < 1) {
       document
-      .getElementById('milestones')
-      .setCustomValidity(`Please add milestones`);
+        .getElementById('milestones')
+        .setCustomValidity(`Please add milestones`);
     } else if (parseInt(inputBudget) !== parseInt(milestoneBudget)) {
       document
         .getElementById('milestones')
@@ -362,8 +378,14 @@ const ProposalCreationPage = ({
             milestoneBudget || 0
           } bnUSD)`,
         );
-    } else if (parseInt(proposal.milestones[proposal.milestones.length-1].completionPeriod) !== parseInt(proposal.projectDuration)) {
-      document.getElementById('milestones').setCustomValidity(
+    } else if (
+      parseInt(
+        proposal.milestones[proposal.milestones.length - 1].completionPeriod,
+      ) !== parseInt(proposal.projectDuration)
+    ) {
+      document
+        .getElementById('milestones')
+        .setCustomValidity(
           `The total duration in milestones should equal to the project duration (currently ${
             proposal.projectDuration || 0
           } months)`,
@@ -371,7 +393,7 @@ const ProposalCreationPage = ({
     } else {
       document.getElementById('milestones').setCustomValidity(``);
     }
-  }, [proposal.totalBudget, proposal.milestones,proposal.projectDuration]);
+  }, [proposal.totalBudget, proposal.milestones, proposal.projectDuration]);
 
   useEffect(() => {
     const minimumNumberOfWords = 10;
@@ -760,7 +782,9 @@ const ProposalCreationPage = ({
                           <tr style={{ height: '100%' }} key={index}>
                             <td>{milestone.name}</td>
                             <td>
-                              {`${findFutureMonth(milestone.completionPeriod)} after ${milestone.completionPeriod} month`}
+                              {`${findFutureMonth(
+                                milestone.completionPeriod,
+                              )} after ${milestone.completionPeriod} month`}
                               {milestone.completionPeriod > 1 && 's'}
                             </td>
                             <td>{milestone.budget} bnUSD</td>
@@ -798,13 +822,18 @@ const ProposalCreationPage = ({
                         ))}
                         <tr>
                           <td colspan='2'>
-                            <p>{`Pre-Payment Amount (${prePaymentPercentage*100}% of Budget)`}</p>
+                            <p>{`Pre-Payment Amount (${
+                              prePaymentPercentage * 100
+                            }% of Budget)`}</p>
                           </td>
 
                           <td>
                             <p>
                               {/* <b>300 bnUSD</b> */}
-                              <b>{prePaymentPercentage*proposal.totalBudget} bnUSD</b>
+                              <b>
+                                {prePaymentPercentage * proposal.totalBudget}{' '}
+                                bnUSD
+                              </b>
                             </p>
                           </td>
                         </tr>
@@ -816,7 +845,12 @@ const ProposalCreationPage = ({
                             <b></b>
                           </td>
                           <td>
-                            <b>{totalInputBudget + (prePaymentPercentage*proposal.totalBudget)} bnUSD</b>
+                            <b>
+                              {totalInputBudget +
+                                prePaymentPercentage *
+                                  proposal.totalBudget}{' '}
+                              bnUSD
+                            </b>
                           </td>
                         </tr>
                       </>
@@ -897,6 +931,7 @@ const ProposalCreationPage = ({
               </Col>
             </Form.Group>
 
+            <Alert variant={'danger'}>{messageToCyrus}</Alert>
             <Alert variant={'info'}>{signingInfoMessage}</Alert>
 
             <Form.Group as={Row}>
@@ -1000,14 +1035,16 @@ const ProposalCreationPage = ({
         onHide={() => setSubmissionConfirmationShow(false)}
         heading={'Proposal Submission Confirmation'}
         size='mdxl'
-
         onConfirm={() => {
           submitProposal({
-            proposal: {...proposal,milestones:proposal.milestones.map((x)=>{
-              const {budget, ...rest} = x;
-              const updatedBudget = IconConverter.toBigNumber(budget*1e18);
-              return {budget:IconConverter.toHex(updatedBudget),...rest};
-            })  }
+            proposal: {
+              ...proposal,
+              milestones: proposal.milestones.map(x => {
+                const { budget, ...rest } = x;
+                const updatedBudget = IconConverter.toBigNumber(budget * 1e18);
+                return { budget: IconConverter.toHex(updatedBudget), ...rest };
+              }),
+            },
           });
         }}
       >
@@ -1054,8 +1091,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = state => ({
-  sponsorBondPercentage:state.preps.sponsorBondPercentage,
-  prePaymentPercentage:state.fund.prePaymentPercentage,
+  sponsorBondPercentage: state.preps.sponsorBondPercentage,
+  prePaymentPercentage: state.fund.prePaymentPercentage,
   submittingProposal: state.proposals.submittingProposal,
   preps: state.preps.preps,
   walletAddress: state.account.address,

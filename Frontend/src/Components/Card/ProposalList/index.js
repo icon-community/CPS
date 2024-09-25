@@ -31,20 +31,22 @@ const ProposalList = ({
       }
     >
       {proposals.length ? (
-        proposals.map(proposal => (
-          <Proposal
-            key={proposal?.ipfsHash}
-            proposal={proposal}
-            selectedTab={selectedTab}
-            proposalPendingPR={proposalPendingPR}
-            proposalPendingPRSameList={proposal.pendingPR}
-            sponsorRequest={sponsorRequest}
-            onClick={() => onClickProposal(proposal)}
-            minLayout={minLayout}
-            showBadge={showBadge}
-            myProposalList={myProposalList}
-          />
-        ))
+        proposals.map(proposal => {
+          return (
+            <Proposal
+              key={proposal?.ipfsHash}
+              proposal={proposal}
+              selectedTab={selectedTab}
+              proposalPendingPR={proposalPendingPR}
+              proposalPendingPRSameList={proposal.pendingPR}
+              sponsorRequest={sponsorRequest}
+              onClick={() => onClickProposal(proposal)}
+              minLayout={minLayout}
+              showBadge={showBadge}
+              myProposalList={myProposalList}
+            />
+          );
+        })
       ) : (
         <span className={styles.noProposals}>
           {emptyListMessage || `No ${selectedTab} Proposals`}

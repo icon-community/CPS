@@ -46,7 +46,6 @@ const Proposal = ({
 }) => {
   const { isRemainingTimeZero } = useTimer();
   const history = useHistory();
-  console.log({proposal});
   //// For drafts only
   if (
     proposalStatusMapping.find(mapping => mapping.status === proposal._status)
@@ -57,7 +56,6 @@ const Proposal = ({
         <Row className={styles.proposalContainer} onClick={onClick}>
           <Col sm={proposalPendingPR ? '8' : '9'} className={styles.infos}>
             <Row style={{ alignItems: 'center' }} className={styles.firstRow}>
-              
               {showBadge && (
                 <Badge
                   size='xs'
@@ -126,7 +124,12 @@ const Proposal = ({
                   </Budget>
                   {sponsorRequest && (
                     <Budget>
-                      {proposal.sponsored_deposit_amount > 0 ? "Sponsor Bond: "+ icxFormat(proposal.sponsored_deposit_amount) + " " + proposal.token  : ''}
+                      {proposal.sponsored_deposit_amount > 0
+                        ? 'Sponsor Bond: ' +
+                          icxFormat(proposal.sponsored_deposit_amount) +
+                          ' ' +
+                          proposal.token
+                        : ''}
                     </Budget>
                   )}
                 </>
@@ -154,7 +157,12 @@ const Proposal = ({
                       </Budget>
                       {sponsorRequest && (
                         <Budget>
-                          {proposal.budget > 0 ? "Sponsor Bond: "+ icxFormat(proposal.budget / 10) + ' ' + proposal.token : ''}
+                          {proposal.budget > 0
+                            ? 'Sponsor Bond: ' +
+                              icxFormat(proposal.budget / 10) +
+                              ' ' +
+                              proposal.token
+                            : ''}
                         </Budget>
                       )}
                     </>
@@ -268,7 +276,7 @@ const Proposal = ({
                   <VoteProgressBar
                     approvedPercentage={proposal.approvedVotesPercentageCount}
                     rejectedPercentage={proposal.rejectedVotesPercentageCount}
-                    abstainedPercentage={proposal.abstainVotesPercentageCount }
+                    abstainedPercentage={proposal.abstainVotesPercentageCount}
                     proposal
                     voterCount
                   />
@@ -336,7 +344,12 @@ const Proposal = ({
                       </Budget>
                       {sponsorRequest && (
                         <Budget>
-                          {proposal.budget > 0 ? "Sponsor Bond: "+ icxFormat(proposal.budget / 10) + ' ' + proposal.token : ''}
+                          {proposal.budget > 0
+                            ? 'Sponsor Bond: ' +
+                              icxFormat(proposal.budget / 10) +
+                              ' ' +
+                              proposal.token
+                            : ''}
                         </Budget>
                       )}
                     </>

@@ -10,8 +10,6 @@ import {
   FormControl,
 } from 'react-bootstrap';
 import styles from './EditMilestoneModal.module.css';
-import RichTextEditor from '../../../Components/RichTextEditor';
-import AppFormLabel from '../../../Components/UI/AppFormLabel';
 
 function EditMilestoneModal(props) {
   const id = Date.now().toString().slice(-6);
@@ -109,7 +107,6 @@ function EditMilestoneModal(props) {
                       <InputGroup.Text>bnUSD</InputGroup.Text>
                     </InputGroup.Append>
                   </InputGroup>
-  
                 </Col>
               </Form.Group>
               <Form.Group as={Col} controlId='durationRow'>

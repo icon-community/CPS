@@ -15,8 +15,8 @@ const PARAMS = {
   sponsorDepositAmount: 'sponsor_deposit_amount',
   sponsorDepositStatus: 'sponsor_deposit_status',
   proposalHash: 'ipfs_hash',
-  isMilestone:'isMilestone',
-  milestoneCount:'milestoneCount',
+  isMilestone: 'isMilestone',
+  milestoneCount: 'milestoneCount',
   approvedVotes: 'approved_votes',
   abstainedVotes: 'abstained_votes',
   abstainVoters: 'abstain_voters',
@@ -44,7 +44,7 @@ export const VotingPhase = {
 };
 
 const initialState = {
-  selectedProposalDetailsbyHash:{},
+  selectedProposalDetailsbyHash: {},
   numberOfSubmittedProposals: 29,
   totalSubmittedProposalBudget: 1240000,
 
@@ -160,8 +160,8 @@ const initialState = {
   sponsorRequestProposalTitle: '',
   sponsorRequestProposal: null,
   selectedProposal: {},
-  selectedProposalForMigration:{},
-  selectedProposalDetailForProgressReport:{},
+  selectedProposalForMigration: {},
+  selectedProposalDetailForProgressReport: {},
   token: '',
   error: '',
   changeVote: false,
@@ -265,10 +265,14 @@ const proposalSlice = createSlice({
       return;
     },
     fetchProposalListSuccess(state, action) {
+      console.log(
+        '===============>',
+        state.proposalList,
+        action.payload.response.data,
+      );
       // state.proposalList = action.payload
       // state.proposalList.
       state.proposalListLoading = false;
-      console.log(action.payload.response.data);
 
       state.proposalList[action.payload.status][action.payload.pageNumber - 1] =
         action.payload.response.data
@@ -331,9 +335,7 @@ const proposalSlice = createSlice({
             //   return (approvedVoters/totalVoters) * 100;
           }))
           .sort((a, b) => b._timestamp - a._timestamp);
-      console.log(fetchProposalListSuccess);
       // console.log(Math.ceil(IconConverter.toNumber(action.payload.response[0].count) / 10));
-      console.log(action.payload.status);
       // state.totalPages[action.payload.status] = Math.ceil(IconConverter.toNumber(action.payload.response[0].count) / 10)
       state.totalPages[action.payload.status] = Math.ceil(
         IconConverter.toNumber(action.payload.response.count) / 10,
@@ -341,6 +343,22 @@ const proposalSlice = createSlice({
       state.totalCount[action.payload.status] = IconConverter.toNumber(
         action.payload.response.count,
       );
+      state.myProposalList.map(myProposals => {
+        const matchedProposals = action.payload.response.data.find(
+          pendingProposals =>
+            pendingProposals.ipfs_hash === myProposals.ipfs_hash,
+        );
+
+        console.log('matched Proposals', matchedProposals);
+
+        if (matchedProposals) {
+          return {
+            ...myProposals,
+            ...matchedProposals,
+          };
+        }
+        return;
+      });
 
       return;
     },
@@ -438,7 +456,7 @@ const proposalSlice = createSlice({
       state.error = true;
     },
     fetchSelectedProposalForProgressReportRequest() {
-      console.log("reached here")
+      console.log('reached here');
       return;
     },
 
@@ -609,12 +627,14 @@ const proposalSlice = createSlice({
     },
 
     fetchMigrationProposalByAddressSuccess(state, action) {
-      console.log("migration proposal list",action.payload.response)
-      state.migrationProposalByAddress = action.payload.response?.data.map(proposal => ({
-        proposalTitle: proposal[PARAMS.proposalTitle],
-        ipfsKey: proposal[PARAMS.proposalHash],
-        contributorAddress:proposal[PARAMS.contributorAddress]
-      }));
+      console.log('migration proposal list', action.payload.response);
+      state.migrationProposalByAddress = action.payload.response?.data.map(
+        proposal => ({
+          proposalTitle: proposal[PARAMS.proposalTitle],
+          ipfsKey: proposal[PARAMS.proposalHash],
+          contributorAddress: proposal[PARAMS.contributorAddress],
+        }),
+      );
       return;
     },
 
@@ -719,69 +739,72 @@ const proposalSlice = createSlice({
       // state.proposalList.
 
       state.myProposalList = action.payload.response.data
-        .map(proposal => ({
-          _status: proposal[PARAMS.status],
-          _proposal_title: proposal[PARAMS.proposalTitle],
-          _contributor_address: proposal[PARAMS.contributorAddress],
-          // budget: parseInt(proposal[PARAMS.totalBudget]),
-          budget: IconConverter.toBigNumber(
-            proposal[PARAMS.totalBudget],
-          ).dividedBy(10 ** 18),
+        .map(proposal => {
+          console.log('myproposal list in redux', proposal);
+          return {
+            _status: proposal[PARAMS.status],
+            _proposal_title: proposal[PARAMS.proposalTitle],
+            _contributor_address: proposal[PARAMS.contributorAddress],
+            // budget: parseInt(proposal[PARAMS.totalBudget]),
+            budget: IconConverter.toBigNumber(
+              proposal[PARAMS.totalBudget],
+            ).dividedBy(10 ** 18),
 
-          _timestamp: proposal[PARAMS.timestamp],
-          _sponsored_timestamp: proposal[PARAMS.sponsoredTimestamp],
-          ipfsHash: proposal[PARAMS.proposalHash],
-          ipfsKey: proposal[PARAMS.proposalHash],
-          approvedVotes: IconConverter.toBigNumber(
-            proposal[PARAMS.approvedVotes],
-          ),
-          totalVotes: IconConverter.toBigNumber(proposal[PARAMS.totalVotes]),
-          projectDuration: IconConverter.toBigNumber(
-            proposal[PARAMS.projectDuration],
-          ),
-          submitProgressReport: Boolean(
-            Number(proposal[PARAMS.submitProgressReport]),
-          ),
+            _timestamp: proposal[PARAMS.timestamp],
+            _sponsored_timestamp: proposal[PARAMS.sponsoredTimestamp],
+            ipfsHash: proposal[PARAMS.proposalHash],
+            ipfsKey: proposal[PARAMS.proposalHash],
+            approvedVotes: IconConverter.toBigNumber(
+              proposal[PARAMS.approvedVotes],
+            ),
+            totalVotes: IconConverter.toBigNumber(proposal[PARAMS.totalVotes]),
+            projectDuration: IconConverter.toBigNumber(
+              proposal[PARAMS.projectDuration],
+            ),
+            submitProgressReport: Boolean(
+              Number(proposal[PARAMS.submitProgressReport]),
+            ),
 
-          sponsorVoteReason: proposal[PARAMS.sponsorVoteReason],
+            sponsorVoteReason: proposal[PARAMS.sponsorVoteReason],
 
-          // approvedPercentage: (!proposal[PARAMS.totalVotes] || parseInt(proposal[PARAMS.totalVotes]) === 0) ? 0 : ((proposal[PARAMS.approvedVotes] / proposal[PARAMS.totalVotes]) * 100),
+            // approvedPercentage: (!proposal[PARAMS.totalVotes] || parseInt(proposal[PARAMS.totalVotes]) === 0) ? 0 : ((proposal[PARAMS.approvedVotes] / proposal[PARAMS.totalVotes]) * 100),
 
-          approvedPercentage: calculatePercentage({
-            total: proposal[PARAMS.totalVotes],
-            actual: proposal[PARAMS.approvedVotes],
-          }),
-          approvedVotesPercentageCount: calculatePercentage({
-            total: proposal[PARAMS.totalVoters],
-            actual: proposal[PARAMS.approvedVoters],
-          }),
-          abstainedPercentage: calculatePercentage({
-            total: proposal[PARAMS.totalVotes],
-            actual: proposal[PARAMS.abstainedVotes],
-          }),
-          abstainVotesPercentageCount: calculatePercentage({
-            total: proposal[PARAMS.totalVoters],
-            actual: proposal[PARAMS.abstainVoters],
-          }),
+            approvedPercentage: calculatePercentage({
+              total: proposal[PARAMS.totalVotes],
+              actual: proposal[PARAMS.approvedVotes],
+            }),
+            approvedVotesPercentageCount: calculatePercentage({
+              total: proposal[PARAMS.totalVoters],
+              actual: proposal[PARAMS.approvedVoters],
+            }),
+            abstainedPercentage: calculatePercentage({
+              total: proposal[PARAMS.totalVotes],
+              actual: proposal[PARAMS.abstainedVotes],
+            }),
+            abstainVotesPercentageCount: calculatePercentage({
+              total: proposal[PARAMS.totalVoters],
+              actual: proposal[PARAMS.abstainVoters],
+            }),
 
-          rejectedPercentage: calculatePercentage({
-            total: proposal[PARAMS.totalVotes],
-            actual: proposal[PARAMS.rejectedVotes],
-          }),
-          rejectedVotesPercentageCount: calculatePercentage({
-            total: proposal[PARAMS.totalVoters],
-            actual: proposal[PARAMS.rejectedVoters],
-          }),
+            rejectedPercentage: calculatePercentage({
+              total: proposal[PARAMS.totalVotes],
+              actual: proposal[PARAMS.rejectedVotes],
+            }),
+            rejectedVotesPercentageCount: calculatePercentage({
+              total: proposal[PARAMS.totalVoters],
+              actual: proposal[PARAMS.rejectedVoters],
+            }),
 
-          completedPercentage: parseInt(
-            IconConverter.toBigNumber(proposal[PARAMS.percentageCompleted]),
-          ),
-          token: proposal[PARAMS.token],
-          // if(parseInt(totalVoters) === 0) {
-          //     return 0;
-          //   }
-          //   return (approvedVoters/totalVoters) * 100;
-        }))
+            completedPercentage: parseInt(
+              IconConverter.toBigNumber(proposal[PARAMS.percentageCompleted]),
+            ),
+            token: proposal[PARAMS.token],
+            // if(parseInt(totalVoters) === 0) {
+            //     return 0;
+            //   }
+            //   return (approvedVoters/totalVoters) * 100;
+          };
+        })
         .sort((a, b) => b._timestamp - a._timestamp);
       console.log(fetchProposalListSuccess);
       // console.log(Math.ceil(IconConverter.toNumber(action.payload.response[0].count) / 10));
@@ -902,8 +925,8 @@ const proposalSlice = createSlice({
         _status: proposal[PARAMS.status],
         _proposal_title: proposal[PARAMS.proposalTitle],
         _contributor_address: proposal[PARAMS.contributorAddress],
-        _milestone_count:proposal[PARAMS.milestoneCount],
-        _is_milestone:proposal[PARAMS.isMilestone],
+        _milestone_count: proposal[PARAMS.milestoneCount],
+        _is_milestone: proposal[PARAMS.isMilestone],
         sponsorAddress: proposal[PARAMS.sponsorAddress],
         // budget: parseInt(proposal[PARAMS.totalBudget]),
         budget: IconConverter.toBigNumber(

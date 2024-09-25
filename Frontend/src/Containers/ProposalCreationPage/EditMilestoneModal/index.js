@@ -10,8 +10,6 @@ import {
   FormControl,
 } from 'react-bootstrap';
 import styles from './EditMilestoneModal.module.css';
-import RichTextEditor from '../../../Components/RichTextEditor';
-import AppFormLabel from '../../../Components/UI/AppFormLabel';
 
 function EditMilestoneModal(props) {
   const [milestone, setMilestone] = useState({
@@ -24,6 +22,7 @@ function EditMilestoneModal(props) {
   useEffect(() => {
     props.milestone &&
       setMilestone({
+        id: props.milestone.id,
         name: props.milestone.name,
         completionPeriod: props.milestone.completionPeriod,
         budget: props.milestone.budget,

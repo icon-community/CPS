@@ -1,27 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Container, Row, Col, Card, Spinner } from 'react-bootstrap';
-import { connect } from 'react-redux';
-import ProposalCard from '../../Components/ProposalCard';
-import Header from '../../Components/Header';
 import ProposalHistoryList from 'Components/Card/ProposalHistoryList';
+import React, { useEffect, useState } from 'react';
+import { Button, Row, Spinner } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import {
-  fetchProposalListRequest,
-  fetchDraftsRequest,
   fetchProposalByIpfsRequest,
-  emptyProposalDetailRequest,
   fetchProposalHistoryRequest,
 } from 'Redux/Reducers/proposalSlice';
-import {
-  withRouter,
-  useLocation,
-  useParams,
-  useHistory,
-} from 'react-router-dom';
-import wallet from 'Redux/ICON/FrontEndWallet';
-import ProposalList from 'Components/Card/ProposalList';
-import TabBar from 'Components/Card/TabBar';
-import styles from '../ActiveProposalsCard/ProposalCard.module.scss';
 import styled from 'styled-components';
+import styles from '../ActiveProposalsCard/ProposalCard.module.scss';
 import NavBarInputGroup from '../UI/LowerCardNavBar/NavBarInputGroup';
 
 const LoadingDiv = styled.div`
@@ -43,7 +30,9 @@ const ProposalHistoryCard = ({
   fetchProposalHistoryRequest,
 }) => {
   const data = [...proposalHistoryList];
-  const sortedProposalList =data.sort((a,b)=>Number(b._timestamp) - Number(a._timestamp));
+  const sortedProposalList = data.sort(
+    (a, b) => Number(b._timestamp) - Number(a._timestamp),
+  );
   // const sortedProposalList =data;
   // console.log(sortedProposalList);
   // console.log(sortedProposalList);

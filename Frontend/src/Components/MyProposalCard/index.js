@@ -52,6 +52,8 @@ const MyProposalCard = ({
     proposalPendingProgressReport,
   );
 
+  console.log('my proposal list', myProposalList);
+
   const onClickProposal = proposal => {
     // setModalShow(true);
     setSelectedProposal(proposal);
@@ -163,7 +165,7 @@ const MyProposalCard = ({
                   alignItems: 'center',
                 }}
               >
-                <div style={{width:'100%'}}>
+                <div style={{ width: '100%' }}>
                   <h5
                     style={{
                       fontWeight: 'bold',
