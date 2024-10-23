@@ -342,6 +342,8 @@ const proposalSlice = createSlice({
         action.payload.response.count,
       );
 
+      state.pendingCount = IconConverter.toNumber(action.payload.response.count);
+
       return;
     },
     fetchProposalListFailure(state) {
