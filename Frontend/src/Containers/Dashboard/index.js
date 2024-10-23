@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../../Components/Header';
 import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
 import ConfirmationModal from 'Components/UI/ConfirmationModal';
 import { payPenalty } from 'Redux/Reducers/prepsSlice';
-import { payPenaltyAmount } from 'Constants';
 import { connect } from 'react-redux';
 import useTimer from 'Hooks/useTimer';
 import InfoCard from './InfoCard';
@@ -14,24 +12,22 @@ import {
   claimReward,
   fetchSponsorBondRequest,
   claimSponsorBondReward,
-  fetchPrePaymentAmountRequest,
   fetchSponsorDepositAmountRequest,
 } from 'Redux/Reducers/fundSlice';
 import {
   fetchProjectAmountsRequest,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest
 } from 'Redux/Reducers/proposalSlice';
 import styles from './Dashboard.module.scss';
 import MyProposalCard from 'Components/MyProposalCard';
-import ProposalPendingPRCard from 'Components/ProposalPendingPRCard';
 import SponsorRequestsCard from 'Components/SponsorRequestsCard';
 import VotingCard from 'Components/VotingCard';
 import { fetchExpectedGrantRequest } from 'Redux/Reducers/fundSlice';
-import { setLoginButtonClicked } from 'Redux/Reducers/accountSlice';
 import congratulationsImg from '../../Assets/Images/congratulations.png';
 import congratulationsWhiteImg from '../../Assets/Images/congratulationsWhite.png';
 import UpperCard from 'Containers/Proposals/UpperCard';
-import { useSelector } from 'react-redux';
+import wallet from 'Redux/ICON/FrontEndWallet';
 
 const Dashboard = ({
   payPenaltyRequest,
@@ -39,8 +35,6 @@ const Dashboard = ({
   isVotingPrep,
   isCouncilManager,
   period,
-  projectAmounts,
-  cpfRemainingFunds,
   cpfScoreAddress,
   fetchCPFTreasuryScoreAddressRequest,
   fetchCPFRemainingFundRequest,
@@ -50,11 +44,9 @@ const Dashboard = ({
   myProposalList,
   fetchExpectedGrantRequest,
   expectedGrant,
-  sponsorBond,
   totalCountSponsorRequests,
   remainingVotesProposal,
   remainingVotesPR,
-  fetchCPSTreasuryScoreAddressRequest,
   cpsTreasuryScoreAddress,
   payPenaltyAmount,
   sponsorReward,
@@ -71,6 +63,8 @@ const Dashboard = ({
   fetchSponsorDepositAmountRequest,
   priorityVote,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest,
+  pendingCount
 }) => {
   const [showPayPenaltyConfirmationModal, setShowPayPenaltyConfirmationModal] =
     useState(false);
@@ -300,6 +294,16 @@ const Dashboard = ({
       )} bnUSD`;
     }
   };
+
+  useEffect(() => {
+    console.log('length fetching new page');
+    fetchProposalListRequest({
+      status: "_pending",
+      walletAddress: address || wallet.getAddress(),
+      pageNumber: 1,
+    });
+    // }
+  }, [fetchProposalListRequest, address]);
 
   useEffect(() => {
     if (isPrep && isRegistered && cpsTreasuryScoreAddress && address) {
@@ -544,7 +548,7 @@ const Dashboard = ({
               period === 'VOTING'
                 ? [
                     {
-                      title: `Priority Voting ${priorityVote ? '' : '[ 1 ]'}`,
+                      title: `Priority Voting ${!priorityVote && (pendingCount > 0) ? '[ 1 ]' : ' '}`,
                       value: 'priorityVoting',
                     },
                     {
@@ -647,6 +651,8 @@ const mapStateToProps = state => ({
   address: state.account.address,
   sponsorDepositAmount: state.fund.sponsorDepositAmount,
   priorityVote: state.proposals.priorityVoting,
+  pendingCount: state.proposals.pendingCount
+  
 });
 
 const mapDispatchToProps = {
@@ -660,6 +666,7 @@ const mapDispatchToProps = {
   fetchSponsorBondRequest,
   fetchSponsorDepositAmountRequest,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
