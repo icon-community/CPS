@@ -756,7 +756,7 @@ function ProgressReportDetailsPage(props) {
                                     button={
                                       votingPRep &&
                                       period === 'VOTING' &&
-                                      status === '_waiting' &&
+                                      status === 'Voting' &&
                                       (!votesByProgressReport.some(
                                         vote =>
                                           vote.sponsorAddress === walletAddress,

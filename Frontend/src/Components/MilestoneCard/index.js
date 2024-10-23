@@ -33,7 +33,9 @@ const MilestoneListCard = ({ milestoneList }) => {
                         <div className='d-flex justify-content-center'>
                           <MdStars className={styles.icon} />
                           <div className='d-flex flex-column'>
-                            <h6>{milestone.name}</h6>
+                            <h6 className={styles.headingText}>
+                              {milestone.name}
+                            </h6>
                             <h6 className={styles.smallText}>
                               Milestone {index + 1}
                             </h6>
