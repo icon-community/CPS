@@ -1,29 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Card, Col } from 'react-bootstrap';
-import styles from './ProposalCard.module.scss';
-import TabBar from 'Components/Card/VotingTabBar';
 import ProposalList from 'Components/Card/ProposalList';
+import TabBar from 'Components/Card/VotingTabBar';
+import React, { useEffect, useState } from 'react';
+import { Card, Col, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import {
   fetchProposalListRequest,
-  setModalShowVoting,
   fetchRemainingVotesRequest,
   fetchSortPriorityProposalListRequest,
+  setModalShowVoting,
 } from 'Redux/Reducers/proposalSlice';
-import Pagination from 'Components/Card/Pagination';
+import styles from './ProposalCard.module.scss';
 import proposalStates from './proposalStates';
 // import { select } from 'redux-saga/effects';
-import wallet from 'Redux/ICON/FrontEndWallet';
-import DetailsModal from 'Components/Card/DetailsModal';
+import PriorityVoteCard from 'Components/Card/PriorityVoteCard';
+import PriorityVoteStatusCard from 'Components/Card/PriorityVoteStatusCard';
 import ProgressReportList from 'Components/Card/ProgressReportList';
+import { useHistory } from 'react-router-dom';
 import {
   fetchProgressReportListRequest,
   setModalShowVotingPR,
 } from 'Redux/Reducers/progressReportSlice';
-import DetailsModalProgressReport from 'Components/Card/DetailsModalProgressReport';
-import PriorityVoteCard from 'Components/Card/PriorityVoteCard';
-import PriorityVoteStatusCard from 'Components/Card/PriorityVoteStatusCard';
-import { useHistory } from 'react-router-dom';
 
 const VotingCard = ({
   proposalList,
@@ -43,9 +39,11 @@ const VotingCard = ({
   fetchRemainingVotesRequest,
   remainingVotesProposal,
   remainingVotesPR,
-  priorityVoting,
 }) => {
-  const [selectedTab, setSelectedTab] = useState(initialState);
+  const [selectedTab, setSelectedTab] = useState(
+    proposalStatesList.find(e => e.value === initialState).value,
+  );
+  console.log('proposal state list', selectedTab);
   const [filteredProposalList, setFilteredProposalList] =
     useState(proposalList);
   let [searchText, setSearchText] = useState('');
@@ -75,8 +73,9 @@ const VotingCard = ({
   };
 
   useEffect(() => {
-    if (selectedTab === 'Priority Voting') {
+    if (selectedTab === 'priorityVoting') {
       if (!priorityVote) {
+        console.log('fetching priority voting');
         fetchProposalListRequest({ status });
       } else {
         fetchSortPriorityProposalListRequest();
@@ -85,43 +84,21 @@ const VotingCard = ({
   }, [selectedTab, priorityVote]);
 
   useEffect(() => {
-    // fetchProgressReport(
-    //     {
-    //         status: status,
-    //         walletAddress: walletAddress || wallet.getAddress(),
-    //         pageNumber: pageNumber?.[selectedTab] ?? 1
-    //     }
-    // );
     fetchRemainingVotesRequest({
       type: 'progress_reports',
     });
   }, [selectedTab, pageNumber, fetchRemainingVotesRequest]);
 
   useEffect(() => {
-    // const filteredProgressReports = (progressReportList[status][(pageNumber?.[selectedTab] - 1) || 0] || []).filter(
-    //     (proposal) => proposal.progressReportTitle.includes(searchText)
-    // );
-
     const filteredProgressReports = remainingVotesPR.filter(proposal =>
       proposal.progressReportTitle
         ?.toLowerCase()
         .includes(searchText?.toLowerCase()),
     );
-
-    // const filteredProgressReports = [];
-
     setFilteredProgressReportList(filteredProgressReports);
   }, [selectedTab, remainingVotesPR, searchText, pageNumber]);
 
   useEffect(() => {
-    // fetchProposalListRequest(
-    //     {
-    //         status: status,
-    //         walletAddress: walletAddress || wallet.getAddress(),
-    //         pageNumber: pageNumber?.[selectedTab] ?? 1
-    //     }
-    // );
-
     fetchRemainingVotesRequest({
       type: 'proposal',
     });
@@ -141,24 +118,12 @@ const VotingCard = ({
   }, []);
 
   useEffect(() => {
-    // const filteredProposals = (selectedTab !== 'All') ? proposalList.filter(
-    //     (proposal) => proposal._status === proposalStatusBySelectedTab[selectedTab]
-    // ) : proposalList;
-
-    // const filteredProposals = (proposalList[status][(pageNumber?.[selectedTab] - 1) || 0] || []).filter(
-    //     (proposal) => proposal._proposal_title.includes(searchText)
-    // );
-
     const filteredProposals = remainingVotesProposal.filter(proposal =>
       proposal._proposal_title.includes(searchText),
     );
 
     setFilteredProposalList(filteredProposals);
   }, [selectedTab, remainingVotesProposal, searchText, pageNumber]);
-
-  // useEffect(() => {
-  //   setSelectedTab('Proposals');
-  // }, [priorityVoting]);
 
   return (
     <>
@@ -181,7 +146,7 @@ const VotingCard = ({
                 // }
               />
               <hr style={{ marginTop: '-9px' }} />
-              {selectedTab === 'Proposals' ? (
+              {selectedTab === 'proposal' ? (
                 <ProposalList
                   minLayout={true}
                   showBadge={false}
@@ -198,7 +163,7 @@ const VotingCard = ({
                       : onClickProposal
                   }
                 />
-              ) : selectedTab === 'Progress Reports' ? (
+              ) : selectedTab === 'progressReport' ? (
                 <ProgressReportList
                   minLayout={true}
                   showBadge={false}
@@ -221,30 +186,6 @@ const VotingCard = ({
                   emptyListMessage='No Priority Voting'
                 />
               )}
-
-              {/* <Pagination
-                                currentPage={pageNumber?.[selectedTab]}
-                                setCurrentPage={(pageNumber) => setCurrentPages(selectedTab, pageNumber)}
-                                totalPages={totalPages[status]} /> */}
-              {/* {modalShow && (
-                <DetailsModal
-                  show={modalShow}
-                  onHide={() => setModalShow(false)}
-                  proposal={selectedProposal}
-                  status={status}
-                  voting={true}
-                />
-              )}
-
-              {modalShowPR && (
-                <DetailsModalProgressReport
-                  show={modalShowPR}
-                  onHide={() => setModalShowPR(false)}
-                  progressReport={selectedProgressReport}
-                  status={status}
-                  voting={true}
-                />
-              )} */}
             </Card.Body>
           </Card>
         </Col>

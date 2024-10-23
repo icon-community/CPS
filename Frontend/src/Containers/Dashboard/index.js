@@ -26,9 +26,7 @@ import MyProposalCard from 'Components/MyProposalCard';
 import ProposalPendingPRCard from 'Components/ProposalPendingPRCard';
 import SponsorRequestsCard from 'Components/SponsorRequestsCard';
 import VotingCard from 'Components/VotingCard';
-import {
-  fetchExpectedGrantRequest,
-} from 'Redux/Reducers/fundSlice';
+import { fetchExpectedGrantRequest } from 'Redux/Reducers/fundSlice';
 import { setLoginButtonClicked } from 'Redux/Reducers/accountSlice';
 import congratulationsImg from '../../Assets/Images/congratulations.png';
 import congratulationsWhiteImg from '../../Assets/Images/congratulationsWhite.png';
@@ -38,6 +36,8 @@ import { useSelector } from 'react-redux';
 const Dashboard = ({
   payPenaltyRequest,
   payPenalty,
+  isVotingPrep,
+  isCouncilManager,
   period,
   projectAmounts,
   cpfRemainingFunds,
@@ -225,11 +225,7 @@ const Dashboard = ({
   useEffect(() => {
     fetchCPFTreasuryScoreAddressRequest();
     fetchProjectAmountsRequest();
-  }, [
-    fetchProjectAmountsRequest,
-    fetchExpectedGrantRequest,
-
-  ]);
+  }, [fetchProjectAmountsRequest, fetchExpectedGrantRequest]);
 
   useEffect(() => {
     if (cpsTreasuryScoreAddress) {
@@ -318,7 +314,7 @@ const Dashboard = ({
   }, [isPrep]);
 
   return address ? (
-    <Container fluid style={{minHeight:'50vh'}}>
+    <Container fluid style={{ minHeight: '50vh' }}>
       {/* < Header title='Dashboard' /> */}
       <Row style={{ marginTop: '30px' }}>
         <Col xs='12'>
@@ -351,13 +347,12 @@ const Dashboard = ({
         <Row style={{ marginTop: '15px' }}>
           <Col xs='12'>
             <Container fluid className={styles.container}>
-            
               <img
                 src={isDarkTheme ? congratulationsWhiteImg : congratulationsImg}
                 style={{ padding: '24px' }}
               />
               <Container
-              fluid
+                fluid
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -418,14 +413,14 @@ const Dashboard = ({
         <Row style={{ marginTop: '15px' }}>
           <Col xs='12'>
             <Container fluid className={styles.container}>
-            <img
+              <img
                 src={isDarkTheme ? congratulationsWhiteImg : congratulationsImg}
                 style={{ padding: '24px' }}
               />
               {isPrep && (
                 <Container style={{ display: 'flex', flexDirection: 'column' }}>
                   <span
-                        className={styles.textContainer}
+                    className={styles.textContainer}
                     style={{
                       fontWeight: '500',
                       fontSize: '1.5rem',
@@ -436,7 +431,7 @@ const Dashboard = ({
                   </span>
 
                   <span
-                        className={styles.textContainer}
+                    className={styles.textContainer}
                     style={{
                       fontWeight: '500',
                       fontSize: '1rem',
@@ -540,40 +535,46 @@ const Dashboard = ({
 
       <UpperCard />
 
-      {isPrep && isRegistered && period === 'VOTING' && (
+      {!!isVotingPrep && period === 'VOTING' && (
         <>
           <div className={styles.myProposalHeading}>Pending Votes</div>
 
           <VotingCard
             proposalStatesList={
               period === 'VOTING'
-                ? ['Priority Voting', 'Proposals', 'Progress Reports']
+                ? [
+                    {
+                      title: `Priority Voting ${priorityVote ? '' : '[ 1 ]'}`,
+                      value: 'priorityVoting',
+                    },
+                    {
+                      title: `Proposals ${
+                        !!remainingVotesProposal.length
+                          ? `[ ${remainingVotesProposal.length} ]`
+                          : ''
+                      }`,
+                      value: 'proposal',
+                    },
+                    {
+                      title: `Progress Reports  ${
+                        !!remainingVotesPR.length
+                          ? `[ ${remainingVotesPR.length} ]`
+                          : ''
+                      }`,
+                      value: 'progressReport',
+                    },
+                  ]
                 : ['Proposals', 'Progress Reports']
             }
-            initialState={period === 'VOTING' ? 'Priority Voting' : 'Proposals'}
+            initialState={period === 'VOTING' ? 'priorityVoting' : 'proposal'}
             priorityVote={priorityVote}
           />
         </>
       )}
 
-      {/* {
-                (!isPrep || !isRegistered) && period === 'APPLICATION' &&
-                <>
-                    <div className={styles.myProposalHeading}>Proposals Pending Progress Report</div>
+      <MyProposalCard />
 
-                    <ProposalPendingPRCard />
-                </>
-            } */}
-
-      {
-        <>
-          {/* <div className={styles.myProposalHeading}>My Proposals</div> */}
-
-          <MyProposalCard />
-        </>
-      }
-
-      {isPrep && isRegistered && (
+      {!isCouncilManager && isPrep && (
         <>
           <div className={styles.myProposalHeading}>Sponsored Projects</div>
 
@@ -623,6 +624,8 @@ const mapStateToProps = state => ({
   cpfRemainingFunds: state.fund.cpfRemainingFunds,
   cpfScoreAddress: state.fund.cpfScoreAddress,
   isPrep: state.account.isPrep,
+  isCouncilManager: state.account.isCouncilManager,
+  isVotingPrep: state.account.votingPRep,
   isRegistered: state.account.isRegistered,
   myProposalList: state.proposals.myProposalList,
   expectedGrant: state.fund.expectedGrant,

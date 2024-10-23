@@ -724,7 +724,9 @@ function ProgressReportDetailsPage(props) {
                         {selectedProgressReportHasMilestone ? (
                           progressDetail?.completedMilestone?.map(
                             (milestone, index) => {
-                              {/* console.log('milestoneId check', IconConverter.toHex(Number(milestone?.id)).toString()) */}
+                              {
+                                /* console.log('milestoneId check', IconConverter.toHex(Number(milestone?.id)).toString()) */
+                              }
                               // console.log("votes of each milestones",votesByProgressReport.filter(x=>Number(x.milestoneId) === milestone.id))
                               return (
                                 <Container
@@ -744,14 +746,17 @@ function ProgressReportDetailsPage(props) {
                                     votesByProgressReport={votesByProgressReport?.filter(
                                       x =>
                                         x?.milestoneId ===
-                                        IconConverter.toHex(Number(milestone?.id)).toString(),
+                                        IconConverter.toHex(
+                                          Number(milestone?.id),
+                                        ).toString(),
                                     )}
                                     duration={milestone.completionPeriod}
                                     budget={milestone.budget}
                                     status={milestone.status}
                                     button={
-                                      isPrep &&
                                       votingPRep &&
+                                      period === 'VOTING' &&
+                                      status === '_waiting' &&
                                       (!votesByProgressReport.some(
                                         vote =>
                                           vote.sponsorAddress === walletAddress,
@@ -967,11 +972,10 @@ function ProgressReportDetailsPage(props) {
                           </Col>
                         )}
 
-                        {isPrep &&
-                          votingPRep &&
+                        {votingPRep &&
                           selectedProgressReportCompletedMilestone ===
                             '0x0' && (
-                              <Alert
+                            <Alert
                               variant='info'
                               style={{
                                 marginTop: '10px',
@@ -982,15 +986,13 @@ function ProgressReportDetailsPage(props) {
                             >
                               <Alert.Heading>No voting required</Alert.Heading>
                               <p className='text-center'>
-                              This progress report doesnot have any completed
-                              milestone. <br />
-                              So, No vote required for this progress report.
+                                This progress report doesnot have any completed
+                                milestone. <br />
+                                So, No vote required for this progress report.
                               </p>
                             </Alert>
-
                           )}
-                        {isPrep &&
-                          votingPRep &&
+                        {votingPRep &&
                           (!votesByProgressReport.some(
                             vote => vote.sponsorAddress === walletAddress,
                           ) ||
@@ -1167,23 +1169,24 @@ function ProgressReportDetailsPage(props) {
                           )}
                       </>
                     ))}
-                  {selectedProgressReportCompletedMilestone === '0x0' && (progressReport?.status !=='_waiting') && (
-                    <Alert
-                      variant='danger'
-                      style={{
-                        marginTop: '10px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Alert.Heading>Progress report rejected</Alert.Heading>
-                      <p className='text-center'>
-                        This progress report doesnot have any completed
-                        milestone.
-                      </p>
-                    </Alert>
-                  )}
+                  {selectedProgressReportCompletedMilestone === '0x0' &&
+                    progressReport?.status !== '_waiting' && (
+                      <Alert
+                        variant='danger'
+                        style={{
+                          marginTop: '10px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Alert.Heading>Progress report rejected</Alert.Heading>
+                        <p className='text-center'>
+                          This progress report doesnot have any completed
+                          milestone.
+                        </p>
+                      </Alert>
+                    )}
 
                   {status === 'Voting' && (
                     <Row>

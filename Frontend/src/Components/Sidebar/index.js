@@ -26,12 +26,10 @@ import { GenIcon } from 'react-icons';
 
 const Aside = ({
   collapsed,
-  rtl,
   toggled,
+  isVotingPRep,
   handleToggleSidebar,
   handleCollapsedChange,
-  isPrep,
-  isRegistered,
   history,
   setToggled,
   priorityVote,
@@ -42,7 +40,6 @@ const Aside = ({
   const highlightedStyle = { background: 'rgba(38, 38, 38, 0.1)' };
   const pathName = history.location.pathname;
   const [notificationsCount, setNotificationsCount] = React.useState(0);
-  const isDark = localStorage.getItem('theme') === 'dark';
   const getHighlightedStyle = routes => {
     return routes.includes(pathName) ? highlightedStyle : {};
   };
@@ -57,7 +54,7 @@ const Aside = ({
     setNotificationsCount(
       priorityVote
         ? remainingVotesProposal.length + remainingVotesPR.length
-        : remainingVotesProposal.length + remainingVotesPR.length,
+        : remainingVotesProposal.length + remainingVotesPR.length + 1,
     );
   }, [priorityVote, remainingVotesPR, remainingVotesProposal, period]);
 
@@ -106,8 +103,36 @@ const Aside = ({
       </SidebarHeader>
 
       <SidebarContent>
-        {(!isPrep || !isRegistered) && (
-          <Menu iconShape='circle'>
+        <Menu iconShape='circle'>
+          {isVotingPRep ? (
+            <MenuItem
+              icon={<MdDashboard />}
+              style={getHighlightedStyle(['/dashboard'])}
+            >
+              {
+                <span
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  Dashboard
+                  {period === 'VOTING' && notificationsCount !== 0 && (
+                    <span
+                      style={{
+                        height: 'fit-content',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        padding: '1px 6px',
+                        backgroundColor: '#fa3e3e',
+                        borderRadius: '2px',
+                      }}
+                    >
+                      {notificationsCount}
+                    </span>
+                  )}
+                </span>
+              }
+              <Link to='/dashboard' />
+            </MenuItem>
+          ) : (
             <MenuItem
               icon={<MdDashboard />}
               style={getHighlightedStyle(['/dashboard'])}
@@ -115,230 +140,47 @@ const Aside = ({
               {<span>Dashboard</span>}
               <Link to='/dashboard' />
             </MenuItem>
-            <MenuItem icon={<FaGem />} style={getHighlightedStyle(['/voting'])}>
-              {<span>Voting</span>}
-              <Link to='/voting' />
-            </MenuItem>
-            <MenuItem
-              icon={<FaList />}
-              style={getHighlightedStyle(['/active-proposals'])}
-            >
-              {<span>Active Proposals</span>}
-              <Link to='/active-proposals' />
-            </MenuItem>
-            {/* <MenuItem
-              icon={<FaTachometerAlt />}
-              style={getHighlightedStyle(['/proposals', '/newProposal'])}
-            >
-              {' '}
-              {<span>Proposals</span>}
-              <Link to={process.env.PUBLIC_URL + '/proposals'} />
-            </MenuItem>
-            <MenuItem
-              icon={<FaGem />}
-              style={getHighlightedStyle([
-                '/progress-reports',
-                '/newProgressReport',
-              ])}
-            >
-              {' '}
-              {<span>Progress Reports</span>}
-              <Link to='/progress-reports' />
-            </MenuItem> */}
+          )}
 
-            {/* <MenuItem icon={<MdForum />}>
-              {' '}
-              {<span>ICON Forum</span>}
-              <a
-                href='https://forum.icon.community/c/contribution-proposals/45'
-                target='_blank'
-              />
-            </MenuItem> */}
-
-            <MenuItem
-              icon={<BiPieChartAlt />}
-              style={getHighlightedStyle(['/proposal-history'])}
-            >
-              {' '}
-              {<span>Proposal History</span>}
-              <Link to='/proposal-history' />
-            </MenuItem>
-
-            <MenuItem
-              icon={<FaChartLine />}
-              style={getHighlightedStyle(['/stats'])}
-            >
-              {' '}
-              {<span>Stats</span>}
-              <Link to='/stats' />
-            </MenuItem>
-
-            <MenuItem icon={<FaBookOpen />}>
-              {' '}
-              {<span>User Guide</span>}
-              <a
-                href='https://github.com/icon-community/CPS/wiki'
-                target='_blank'
-              />
-            </MenuItem>
-
-            {/* <MenuItem icon={<CgFileDocument/>}
-              > {<span>CPS Whitepaper</span>}
-                <a href="https://docs.google.com/document/d/1yPwgsXx4ow5NVnG1ktMKYp5JvjQvWEfuSkq6Iy-OIXA/" target = "_blank" />
-
-              </MenuItem>  */}
-          </Menu>
-        )}
-
-        {isPrep && isRegistered && (
-          <>
-            <Menu iconShape='circle'>
-              <MenuItem
-                icon={<MdDashboard />}
-                style={getHighlightedStyle(['/dashboard'])}
-              >
-                {
-                  <span style={{ display:'flex',justifyContent:'space-between' }}>
-                    Dashboard
-                    {period === 'VOTING' && notificationsCount!==0 && (
-                      <span
-                        style={{
-                         height:'fit-content',
-                          fontSize: '12px',
-                          fontWeight:'600',
-                          padding: '1px 6px',
-                          backgroundColor: '#fa3e3e',
-                          borderRadius: '2px',
-                        }}
-                      >
-                        {notificationsCount}
-                      </span>
-                    )}
-                  </span>
-                }
-                <Link to='/dashboard' />
-              </MenuItem>
-              <MenuItem
-                icon={<FaGem />}
-                style={getHighlightedStyle(['/voting'])}
-              >
-                {<span>Voting</span>}
-                <Link to='/voting' />
-              </MenuItem>
-              <MenuItem
-                icon={<FaList />}
-                style={getHighlightedStyle(['/active-proposals'])}
-              >
-                {<span>Active Proposals</span>}
-                <Link to='/active-proposals' />
-              </MenuItem>
-              {/* <MenuItem
-                icon={<FaTachometerAlt />}
-                style={getHighlightedStyle(['/proposals', '/newProposal'])}
-              >
-                {' '}
-                {<span>Proposals</span>}
-                <Link to={process.env.PUBLIC_URL + '/proposals'} />
-              </MenuItem>
-              <MenuItem
-                icon={<FaGem />}
-                style={getHighlightedStyle([
-                  '/progress-reports',
-                  '/newProgressReport',
-                ])}
-              >
-                {' '}
-                {<span>Progress Reports</span>}
-                <Link to='/progress-reports' />
-              </MenuItem> */}
-
-              {/* <MenuItem
-                icon={<FaTachometerAlt />}
-
-              >
-                {<span>Sponsor Requests</span>}
-                <Link to="/sponsorRequests" />
-
-              </MenuItem> */}
-              {/* <MenuItem icon={<FaGem />}
-                suffix={<Badge size="xl" variant="primary" >3</Badge>}> {<span>Voting</span>}
-                <Link to="/voting" />
-
-              </MenuItem> */}
-              {/* <MenuItem icon={<FaList />}
-              > {<span>Backed Projects</span>}
-                <Link to="/backed-projects" />
-
-              </MenuItem> */}
-
-              <MenuItem
-                icon={<BiPieChartAlt />}
-                style={getHighlightedStyle(['/proposal-history'])}
-              >
-                {' '}
-                {<span>Proposal History</span>}
-                <Link to='/proposal-history' />
-              </MenuItem>
-
-              <MenuItem
-                icon={<FaChartLine />}
-                style={getHighlightedStyle(['/stats'])}
-              >
-                {' '}
-                {<span>Stats</span>}
-                <Link to='/stats' />
-              </MenuItem>
-
-              <MenuItem icon={<FaBookOpen />}>
-                {' '}
-                {<span>User Guide</span>}
-                <a
-                  href='https://github.com/icon-community/CPS/wiki'
-                  target='_blank'
-                />
-              </MenuItem>
-
-              {/* <MenuItem icon={<CgFileDocument/>}
-              > {<span>CPS Whitepaper</span>}
-                <a href="https://docs.google.com/document/d/1yPwgsXx4ow5NVnG1ktMKYp5JvjQvWEfuSkq6Iy-OIXA/" target = "_blank" />
-
-              </MenuItem>  */}
-            </Menu>
-          </>
-        )}
-        {/* <Menu iconShape="circle">
-          <SubMenu
-            suffix={<span className="badge yellow">3</span>}
-            title={Message.withSuffix}
-            icon={<FaRegLaughWink />}
+          <MenuItem icon={<FaGem />} style={getHighlightedStyle(['/voting'])}>
+            {<span>Voting</span>}
+            <Link to='/voting' />
+          </MenuItem>
+          <MenuItem
+            icon={<FaList />}
+            style={getHighlightedStyle(['/active-proposals'])}
           >
-            <MenuItem>{Message.submenu} 1</MenuItem>
-            <MenuItem>{Message.submenu} 2</MenuItem>
-            <MenuItem>{Message.submenu} 3</MenuItem>
-          </SubMenu>
-          <SubMenu
-            prefix={<span className="badge gray">3</span>}
-            title={Message.withPrefix}
-            icon={<FaHeart />}
+            {<span>Active Proposals</span>}
+            <Link to='/active-proposals' />
+          </MenuItem>
+
+          <MenuItem
+            icon={<BiPieChartAlt />}
+            style={getHighlightedStyle(['/proposal-history'])}
           >
-            <MenuItem>{Message.submenu} 1</MenuItem>
-            <MenuItem>{Message.submenu} 2</MenuItem>
-            <MenuItem>{Message.submenu} 3</MenuItem>
-          </SubMenu>
-          <SubMenu title={Message.multiLevel} icon={<FaList />}>
-            <MenuItem>{Message.submenu} 1 </MenuItem>
-            <MenuItem>{Message.submenu} 2 </MenuItem>
-            <SubMenu title={`${Message.submenu} 3`}>
-              <MenuItem>{Message.submenu} 3.1 </MenuItem>
-              <MenuItem>{Message.submenu} 3.2 </MenuItem>
-              <SubMenu title={`${Message.submenu} 3.3`}>
-                <MenuItem>{Message.submenu} 3.3.1 </MenuItem>
-                <MenuItem>{Message.submenu} 3.3.2 </MenuItem>
-                <MenuItem>{Message.submenu} 3.3.3 </MenuItem>
-              </SubMenu>
-            </SubMenu>
-          </SubMenu>
-        </Menu> */}
+            {' '}
+            {<span>Proposal History</span>}
+            <Link to='/proposal-history' />
+          </MenuItem>
+
+          <MenuItem
+            icon={<FaChartLine />}
+            style={getHighlightedStyle(['/stats'])}
+          >
+            {' '}
+            {<span>Stats</span>}
+            <Link to='/stats' />
+          </MenuItem>
+
+          <MenuItem icon={<FaBookOpen />}>
+            {' '}
+            {<span>User Guide</span>}
+            <a
+              href='https://github.com/icon-community/CPS/wiki'
+              target='_blank'
+            />
+          </MenuItem>
+        </Menu>
       </SidebarContent>
     </ProSidebar>
   );
@@ -346,6 +188,7 @@ const Aside = ({
 
 const mapStateToProps = state => ({
   isPrep: state.account.isPrep,
+  isVotingPRep: state.account.votingPRep,
   period: state.period.period,
   isRegistered: state.account.isRegistered,
   priorityVote: state.proposals.priorityVoting,
