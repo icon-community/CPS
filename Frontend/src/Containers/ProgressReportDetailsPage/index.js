@@ -883,7 +883,7 @@ function ProgressReportDetailsPage(props) {
                       </Container>
                     ) : (
                       <>
-                        {progressDetail?.projectTermRevision && (
+                        {!!progressDetail?.projectTermRevision ? (
                           <Row>
                             <Col
                               xs='12'
@@ -902,9 +902,9 @@ function ProgressReportDetailsPage(props) {
                               </span>
                             </Col>
                           </Row>
-                        )}
+                        ) : null}
 
-                        {progressDetail?.projectTermRevision && (
+                        {!!progressDetail?.projectTermRevision ? (
                           <>
                             <Col xs='12'>
                               <Row style={{ marginTop: '10px' }}>
@@ -958,7 +958,7 @@ function ProgressReportDetailsPage(props) {
                               </Col>
                             </Row>
                           </>
-                        )}
+                        ) : null}
                         {error && (
                           <Col
                             xs={24}
@@ -972,107 +972,109 @@ function ProgressReportDetailsPage(props) {
                           </Col>
                         )}
 
-                        {votingPRep &&
-                          selectedProgressReportCompletedMilestone ===
-                            '0x0' && (
-                            <Alert
-                              variant='info'
-                              style={{
-                                marginTop: '10px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <Alert.Heading>No voting required</Alert.Heading>
-                              <p className='text-center'>
-                                This progress report doesnot have any completed
-                                milestone. <br />
-                                So, No vote required for this progress report.
-                              </p>
-                            </Alert>
-                          )}
-                        {votingPRep &&
+                        {!!(
+                          votingPRep &&
+                          selectedProgressReportCompletedMilestone === '0x0'
+                        ) ? (
+                          <Alert
+                            variant='info'
+                            style={{
+                              marginTop: '10px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Alert.Heading>No voting required</Alert.Heading>
+                            <p className='text-center'>
+                              This progress report doesnot have any completed
+                              milestone. <br />
+                              So, No vote required for this progress report.
+                            </p>
+                          </Alert>
+                        ) : null}
+                        {!!(
+                          votingPRep &&
                           (!votesByProgressReport.some(
                             vote => vote.sponsorAddress === walletAddress,
                           ) ||
                             changeVoteButton) &&
-                          selectedProgressReportCompletedMilestone !==
-                            '0x0' && (
-                            <Container
-                              fluid
-                              style={{
-                                marginTop: '12px',
-                                padding: '16px 8px',
-                                backgroundColor: 'var(--proposal-card-color)',
-                              }}
-                            >
-                              <Col xs='12'>
-                                <span
-                                  style={{
-                                    color: 'var(--proposal-text-color)',
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  Explain in brief the reason behind your
-                                  decision:
-                                </span>
-                                <InfoIcon
-                                  description={specialCharacterMessage()}
-                                />
-                              </Col>
-
-                              <Col xs='12'>
-                                <RichTextEditor
-                                  initialData={voteReason}
-                                  required
-                                  onChange={data => setVoteReason(data)}
-                                />
-                                <input
-                                  className={styles.fakeInput}
-                                  style={{ left: '15px' }}
-                                  id='voteReason'
-                                />
-                              </Col>
-                              <Row
+                          selectedProgressReportCompletedMilestone !== '0x0'
+                        ) ? (
+                          <Container
+                            fluid
+                            style={{
+                              marginTop: '12px',
+                              padding: '16px 8px',
+                              backgroundColor: 'var(--proposal-card-color)',
+                            }}
+                          >
+                            <Col xs='12'>
+                              <span
                                 style={{
-                                  width: '100%',
-                                  display: 'flex',
-                                  justifyContent: 'center',
+                                  color: 'var(--proposal-text-color)',
+                                  fontWeight: 600,
                                 }}
                               >
-                                {!isMaintenanceMode ? (
-                                  <Button
-                                    variant='primary'
-                                    onClick={() => handleVoteSubmission()}
-                                    style={{
-                                      marginTop: '10px',
-                                      width: '150px',
-                                    }}
-                                  >
-                                    Submit Vote
-                                  </Button>
-                                ) : (
-                                  <Popup
-                                    component={
-                                      <span className='d-inline-block'>
-                                        <Button
-                                          variant='info'
-                                          type='submit'
-                                          disabled
-                                          style={{ pointerEvents: 'none' }}
-                                        >
-                                          SUBMIT
-                                        </Button>
-                                      </span>
-                                    }
-                                    popOverText='You can submit a vote after the maintenance period is over.'
-                                    placement='left'
-                                  />
-                                )}
-                              </Row>
-                            </Container>
-                          )}
+                                Explain in brief the reason behind your
+                                decision:
+                              </span>
+                              <InfoIcon
+                                description={specialCharacterMessage()}
+                              />
+                            </Col>
+
+                            <Col xs='12'>
+                              <RichTextEditor
+                                initialData={voteReason}
+                                required
+                                onChange={data => setVoteReason(data)}
+                              />
+                              <input
+                                className={styles.fakeInput}
+                                style={{ left: '15px' }}
+                                id='voteReason'
+                              />
+                            </Col>
+                            <Row
+                              style={{
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              {!isMaintenanceMode ? (
+                                <Button
+                                  variant='primary'
+                                  onClick={() => handleVoteSubmission()}
+                                  style={{
+                                    marginTop: '10px',
+                                    width: '150px',
+                                  }}
+                                >
+                                  Submit Vote
+                                </Button>
+                              ) : (
+                                <Popup
+                                  component={
+                                    <span className='d-inline-block'>
+                                      <Button
+                                        variant='info'
+                                        type='submit'
+                                        disabled
+                                        style={{ pointerEvents: 'none' }}
+                                      >
+                                        SUBMIT
+                                      </Button>
+                                    </span>
+                                  }
+                                  popOverText='You can submit a vote after the maintenance period is over.'
+                                  placement='left'
+                                />
+                              )}
+                            </Row>
+                          </Container>
+                        ) : null}
                         {progressDetail?.isLastProgressReport && (
                           <Alert
                             variant='info'
