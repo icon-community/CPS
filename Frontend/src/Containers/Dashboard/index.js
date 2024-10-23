@@ -308,10 +308,10 @@ const Dashboard = ({
   }, [isPrep, isRegistered, cpsTreasuryScoreAddress, address]);
 
   useEffect(() => {
-    if (isPrep) {
+    if (isCouncilManager || isPrep) {
       fetchPriorityVotingRequest();
     }
-  }, [isPrep]);
+  }, [isCouncilManager, isPrep]);
 
   return address ? (
     <Container fluid style={{ minHeight: '50vh' }}>

@@ -43,7 +43,6 @@ const VotingCard = ({
   const [selectedTab, setSelectedTab] = useState(
     proposalStatesList.find(e => e.value === initialState).value,
   );
-  console.log('proposal state list', selectedTab);
   const [filteredProposalList, setFilteredProposalList] =
     useState(proposalList);
   let [searchText, setSearchText] = useState('');
