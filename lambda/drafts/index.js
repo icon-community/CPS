@@ -43,7 +43,8 @@ function convertToReadableStream({ content, fileName, type }) {
 async function uploadToFleek({ content, fileName, type = 'json' }) {
 	let fileStream = convertToReadableStream({ content, fileName, type })
 	let uploadResult = await fleekSdk.storage().uploadFile({
-		file: fileStream
+		file: fileStream,
+		parentFolderId: process.env.FLEEK_FOLDER_ID
 	});
 	uploadResult.hash = uploadResult.pin.cid;
 	let ipfsUrl = `https://gateway.ipfs.io/ipfs/${uploadResult.hash}`;
