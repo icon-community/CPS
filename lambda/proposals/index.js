@@ -1,9 +1,19 @@
-const fleekStorage = require('@fleekhq/fleek-storage-js');
+const { FleekSdk, PersonalAccessTokenService } = require('@fleek-platform/sdk/node');
 const parser = require('lambda-multipart-parser');
 const AWS = require('aws-sdk');
 const redis = require('redis');
 const { promisify } = require('util');
 var { v4: uuidv4 } = require('uuid');
+require('dotenv').config()
+
+const accessTokenService = new PersonalAccessTokenService({
+	personalAccessToken: process.env.FLEEK_PERSONAL_ACCESS_TOKEN,
+	projectId: process.env.FLEEK_PROJECT_ID
+});
+
+const fleekSdk = new FleekSdk({
+	accessTokenService,
+});
 
 // Redis initialize
 const client = redis.createClient(process.env.REDIS_URL);
@@ -18,6 +28,39 @@ const SES = new AWS.SES({
 const emailFrom = process.env.MAIL_FROM;
 const template = process.env.SPONSORSHIP_REQUEST_TEMPLATE;
 const sponsorAcceptTemplate = process.env.SPONSORSHIP_ACCEPTED_TEMPLATE;
+
+function convertToReadableStream({ content, fileName, type }) {
+
+	if (type == 'json') {
+		const jsonString = JSON.stringify(content);
+		const bufferData = Buffer.from(jsonString, 'utf-8');
+		content = bufferData
+	}
+
+	// Return as FileLike object (compatible with Fleek SDK)
+	return {
+		name: fileName,
+		stream: () => new ReadableStream({
+			start(controller) {
+				controller.enqueue(content);
+				controller.close();
+			}
+		})
+	};
+}
+
+/* Upload to Fleek Storage. */
+async function uploadToFleek({ content, fileName, type = 'json' }) {
+	console.log("Uploading file to fleek storage...");
+	let fileStream = convertToReadableStream({ content, fileName, type })
+	let uploadResult = await fleekSdk.storage().uploadFile({
+		file: fileStream
+	});
+	uploadResult.hash = uploadResult.pin.cid;
+	let ipfsUrl = `https://gateway.ipfs.io/ipfs/${uploadResult.hash}`;
+	console.log(`✅ Upload Success! IPFS url: ${ipfsUrl}`);
+	return uploadResult
+}
 
 async function send_email(firstName, emailAddress, body) {
 	try {
@@ -52,14 +95,8 @@ async function uploadProposal(body) {
 			await delAsync(`address:${body.address}:type:${body.type}:drafts:${body.ipfsKey}`);
 		}
 
-		var uploadedProposal = await fleekStorage.upload({
-			apiKey: process.env.API_KEY,
-			apiSecret: process.env.API_SECRET,
-			key: body.ipfsKey,
-			data: JSON.stringify(body),
-		});
+		const uploadedProposal = await uploadToFleek({ content: body, fileName: body.ipfsKey });
 		uploadedProposal.ipfsKey = body.ipfsKey;
-
 		return uploadedProposal;
 	} catch (error) {
 		console.error('Upload Proposal failed ' + error);
@@ -71,12 +108,7 @@ async function updateProposal(body) {
 	try {
 		if (!body.ipfsKey) throw new Error('ipfsKey isnot found');
 
-		var updatedProposal = await fleekStorage.upload({
-			apiKey: process.env.API_KEY,
-			apiSecret: process.env.API_SECRET,
-			key: body.ipfsKey,
-			data: JSON.stringify(body),
-		});
+		const updatedProposal = await uploadToFleek({ content: body, fileName: body.ipfsKey });
 		updatedProposal.ipfsKey = body.ipfsKey;
 
 		return updatedProposal;
@@ -89,15 +121,9 @@ async function updateProposal(body) {
 async function uploadFile(payload) {
 	try {
 		const parsedRequest = await parser.parse(payload);
-		console.log(parsedRequest);
-
-		const ipfsKey = 'image' + parsedRequest.files[0].filename + uuidv4();
-		const uploadedFile = await fleekStorage.upload({
-			apiKey: process.env.API_KEY,
-			apiSecret: process.env.API_SECRET,
-			key: ipfsKey,
-			data: parsedRequest.files[0].content,
-		});
+		const { filename: fileName, content: fileContent } = parsedRequest.files[0];
+		const ipfsKey = `image${fileName}${uuidv4()}`;
+		const uploadedFile = await uploadToFleek({ content: fileContent, fileName: ipfsKey, type: 'file' });
 
 		const response = {
 			url: 'https://gateway.ipfs.io/ipfs/' + uploadedFile.hash
