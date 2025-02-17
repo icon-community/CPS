@@ -9,7 +9,8 @@
   "author": "ibriz.ai",
   "license": "ISC",
   "dependencies": {
-    "@fleekhq/fleek-storage-js": "^1.0.3",
+    "@fleek-platform/sdk": "^3.5.1",
+    "dotenv": "^16.4.7",
     "redis": "^3.0.2",
     "util": "^0.12.3",
     "uuid": "^8.3.1"
