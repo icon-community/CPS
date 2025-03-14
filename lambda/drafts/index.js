@@ -1,4 +1,4 @@
-const fleekStorage = require('@fleekhq/fleek-storage-js');
+const { FleekSdk, PersonalAccessTokenService } = require('@fleek-platform/sdk/node');
 const redis = require('redis');
 const { promisify } = require('util');
 var { v4: uuidv4 } = require('uuid');
@@ -8,6 +8,50 @@ const getAsync = promisify(client.get).bind(client);
 const setAsync = promisify(client.set).bind(client);
 const getAllProposalAsync = promisify(client.keys).bind(client);
 
+require('dotenv').config()
+
+const accessTokenService = new PersonalAccessTokenService({
+	personalAccessToken: process.env.FLEEK_PERSONAL_ACCESS_TOKEN,
+	projectId: process.env.FLEEK_PROJECT_ID
+});
+
+const fleekSdk = new FleekSdk({
+	accessTokenService,
+});
+
+function convertToReadableStream({ content, fileName, type }) {
+
+	if (type == 'json') {
+		const jsonString = JSON.stringify(content);
+		const bufferData = Buffer.from(jsonString, 'utf-8');
+		content = bufferData
+	}
+
+	// Return as FileLike object (compatible with Fleek SDK)
+	return {
+		name: fileName,
+		stream: () => new ReadableStream({
+			start(controller) {
+				controller.enqueue(content);
+				controller.close();
+			}
+		})
+	};
+}
+
+/* Upload to Fleek Storage. */
+async function uploadToFleek({ content, fileName, type = 'json' }) {
+	let fileStream = convertToReadableStream({ content, fileName, type })
+	let uploadResult = await fleekSdk.storage().uploadFile({
+		file: fileStream,
+		parentFolderId: process.env.FLEEK_FOLDER_ID
+	});
+	uploadResult.hash = uploadResult.pin.cid;
+	let ipfsUrl = `https://gateway.ipfs.io/ipfs/${uploadResult.hash}`;
+	console.log(`✅ Upload Success! IPFS url: ${ipfsUrl}`);
+	return uploadResult
+}
+
 async function uploadDraftToIPFS(payload) {
 
 	let body = JSON.parse(payload);
@@ -16,13 +60,7 @@ async function uploadDraftToIPFS(payload) {
 	const ipfsKey = body.type + uuidv4();
 	body.ipfsKey = ipfsKey;
 
-	//sending data to Fleek
-	let uploadedProposal = await fleekStorage.upload({
-		apiKey: process.env.API_KEY,
-		apiSecret: process.env.API_SECRET,
-		key: ipfsKey,
-		data: JSON.stringify(body),
-	});
+	const uploadedProposal = await uploadToFleek({ content: body, fileName: ipfsKey });
 
 	uploadedProposal.ipfsKey = body.ipfsKey;
 	uploadedProposal.address = body.address;
@@ -43,13 +81,7 @@ async function updateDraftToIPFS(payload) {
 	if (!body.address) throw new Error('address field missing');
 	if (!body.type) throw new Error('type field missing')
 
-	//updating data at fleek
-	let updatedProposal = await fleekStorage.upload({
-		apiKey: process.env.API_KEY,
-		apiSecret: process.env.API_SECRET,
-		key: body.ipfsKey,
-		data: JSON.stringify(body),
-	});
+	const updatedProposal = await uploadToFleek({ content: body, fileName: ipfsKey });
 
 	updatedProposal.ipfsKey = body.ipfsKey;
 	updatedProposal.address = body.address;
