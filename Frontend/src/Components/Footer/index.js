@@ -2,10 +2,7 @@ import React from 'react';
 import { Row, Col, Container } from 'react-bootstrap';
 import styles from './Footer.module.scss';
 import ClassNames from 'classnames';
-import {
-  AiFillTwitterCircle,
-  AiFillGithub,
-} from 'react-icons/ai';
+import { AiFillTwitterCircle, AiFillGithub } from 'react-icons/ai';
 import { BsMoon } from 'react-icons/bs';
 import { MdWbSunny } from 'react-icons/md';
 import { FaDiscord } from 'react-icons/fa';
@@ -30,7 +27,7 @@ const socialLinks = [
     name: 'github',
     link: 'https://github.com/icon-community/CPS',
     icon: AiFillGithub,
-  }
+  },
 ];
 
 const resourcesLinks = [
@@ -78,8 +75,7 @@ const communityLinks = [
     title: 'Discord',
     link: 'https://discord.gg/b5QvCXJjJM',
   },
-  { title: 'Blog', 
-  link: 'https://www.icon.foundation/blog' },
+  { title: 'Blog', link: 'https://www.icon.foundation/blog' },
 ];
 
 const Footer = ({ console = false, width = undefined, footerRef }) => {
@@ -123,8 +119,8 @@ const Footer = ({ console = false, width = undefined, footerRef }) => {
           }}
         >
           <p style={{ fontWeight: '700' }}>Resources</p>
-          {resourcesLinks.map(link => (
-            <div style={{ marginTop: '10px' }}>
+          {resourcesLinks.map((link, index) => (
+            <div style={{ marginTop: '10px' }} key={index}>
               <a
                 href={link.link}
                 target='_blank'
@@ -150,8 +146,8 @@ const Footer = ({ console = false, width = undefined, footerRef }) => {
           }}
         >
           <p style={{ fontWeight: '700' }}>Ecosystem</p>
-          {ecosystemLinks.map(link => (
-            <div style={{ marginTop: '10px' }}>
+          {ecosystemLinks.map((link, index) => (
+            <div style={{ marginTop: '10px' }} key={index}>
               <a
                 href={link.link}
                 target='_blank'
@@ -176,8 +172,8 @@ const Footer = ({ console = false, width = undefined, footerRef }) => {
           }}
         >
           <p style={{ fontWeight: '700' }}>Community</p>
-          {communityLinks.map(link => (
-            <div style={{ marginTop: '10px' }}>
+          {communityLinks.map((link, index) => (
+            <div style={{ marginTop: '10px' }} key={index}>
               <a
                 href={link.link}
                 target='_blank'
@@ -201,33 +197,34 @@ const Footer = ({ console = false, width = undefined, footerRef }) => {
             textAlign: width && width <= 991 ? 'center' : 'right',
             paddingRight: width && width <= 991 ? '0px' : '42px',
           }}
-        > <div style={{padding:'12px 24px'}}>
-        <button
-          style={{
-            padding: '4px 8px',
-            border: 'none',
-            borderRadius: 6,
-            backgroundColor: isDark ? '#1b1b1b' : '#f1f1f1',
-          }}
-          onClick={() => {
-            isDark
-              ? localStorage.setItem('theme', 'light')
-              : localStorage.setItem('theme', 'dark');
-            window.location.reload();
-          }}
         >
-          {isDark ? (
-            <MdWbSunny size={20} style={{ color: ' white' }} />
-          ) : (
-            <BsMoon size={20} style={{ color: '#27aab9' }} />
-          )}
-        </button>
-      </div>
+          {' '}
+          <div style={{ padding: '12px 24px' }}>
+            <button
+              style={{
+                padding: '4px 8px',
+                border: 'none',
+                borderRadius: 6,
+                backgroundColor: isDark ? '#1b1b1b' : '#f1f1f1',
+              }}
+              onClick={() => {
+                isDark
+                  ? localStorage.setItem('theme', 'light')
+                  : localStorage.setItem('theme', 'dark');
+                window.location.reload();
+              }}
+            >
+              {isDark ? (
+                <MdWbSunny size={20} style={{ color: ' white' }} />
+              ) : (
+                <BsMoon size={20} style={{ color: '#27aab9' }} />
+              )}
+            </button>
+          </div>
           <img src={cpsLogo} style={{ width: '45%' }} />
           <div
             style={{ marginTop: '20px', fontSize: '14px', fontWeight: '600' }}
           >
-           
             <div>
               Built by:{' '}
               <a
@@ -292,7 +289,6 @@ const Footer = ({ console = false, width = undefined, footerRef }) => {
               </Button>{' '}
             </a>
           </div> */}
-
           <div
             style={{
               marginTop: '42px',

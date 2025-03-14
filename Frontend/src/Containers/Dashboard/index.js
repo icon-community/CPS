@@ -528,8 +528,9 @@ const Dashboard = ({
         </Row>
       )}
       <Row style={{ justifyContent: 'center', padding: '24px 0px' }}>
-        {cardInfo.map(info => (
+        {cardInfo.map((info, index) => (
           <Col
+            key={index}
             lg='3'
             style={{ marginTop: '10px' }}
             className={styles.infoCardContainer}
