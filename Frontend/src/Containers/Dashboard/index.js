@@ -20,6 +20,7 @@ import {
 import {
   fetchProjectAmountsRequest,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest,
 } from 'Redux/Reducers/proposalSlice';
 import styles from './Dashboard.module.scss';
 import MyProposalCard from 'Components/MyProposalCard';
@@ -32,10 +33,12 @@ import congratulationsImg from '../../Assets/Images/congratulations.png';
 import congratulationsWhiteImg from '../../Assets/Images/congratulationsWhite.png';
 import UpperCard from 'Containers/Proposals/UpperCard';
 import { useSelector } from 'react-redux';
+import wallet from 'Redux/ICON/FrontEndWallet';
 
 const Dashboard = ({
   payPenaltyRequest,
   payPenalty,
+  pendingCount,
   isVotingPrep,
   isCouncilManager,
   period,
@@ -71,6 +74,7 @@ const Dashboard = ({
   fetchSponsorDepositAmountRequest,
   priorityVote,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest,
 }) => {
   const [showPayPenaltyConfirmationModal, setShowPayPenaltyConfirmationModal] =
     useState(false);
@@ -92,6 +96,16 @@ const Dashboard = ({
   let cardInfo;
   const isDarkTheme = localStorage.getItem('theme') === 'dark';
   // const isDark = useSelector(state => state.theme.isDark);
+
+  useEffect(() => {
+    console.log('length fetching new page');
+    fetchProposalListRequest({
+      status: 'Pending',
+      walletAddress: address || wallet.getAddress(),
+      pageNumber: 1,
+    });
+    // }
+  }, [fetchProposalListRequest, address]);
 
   const getSponsorBondRewardText = amount => {
     if (parseFloat(amount.icx) > 0 && parseFloat(amount.bnUSD) > 0) {
@@ -544,7 +558,9 @@ const Dashboard = ({
               period === 'VOTING'
                 ? [
                     {
-                      title: `Priority Voting ${priorityVote ? '' : '[ 1 ]'}`,
+                      title: `Priority Voting ${
+                        !priorityVote && pendingCount > 0 ? '[ 1 ]' : ' '
+                      }`,
                       value: 'priorityVoting',
                     },
                     {
@@ -619,6 +635,7 @@ const Dashboard = ({
 const mapStateToProps = state => ({
   payPenalty: state.account.payPenalty,
   period: state.period.period,
+  pendingCount: state.proposals.pendingCount,
   previousPeriod: state.period.previousPeriod,
   projectAmounts: state.proposals.projectAmounts,
   cpfRemainingFunds: state.fund.cpfRemainingFunds,
@@ -660,6 +677,7 @@ const mapDispatchToProps = {
   fetchSponsorBondRequest,
   fetchSponsorDepositAmountRequest,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

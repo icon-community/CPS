@@ -35,6 +35,7 @@ const Aside = ({
   priorityVote,
   remainingVotesProposal,
   remainingVotesPR,
+  pendingCount,
   period,
 }) => {
   const highlightedStyle = { background: 'rgba(38, 38, 38, 0.1)' };
@@ -54,7 +55,9 @@ const Aside = ({
     setNotificationsCount(
       priorityVote
         ? remainingVotesProposal.length + remainingVotesPR.length
-        : remainingVotesProposal.length + remainingVotesPR.length + 1,
+        : remainingVotesProposal.length +
+            remainingVotesPR.length +
+            (pendingCount > 0 ? 1 : 0),
     );
   }, [priorityVote, remainingVotesPR, remainingVotesProposal, period]);
 
@@ -194,6 +197,7 @@ const mapStateToProps = state => ({
   priorityVote: state.proposals.priorityVoting,
   remainingVotesProposal: state.proposals.remainingVotes,
   remainingVotesPR: state.progressReport.remainingVotes,
+  pendingCount: state.proposals.pendingCount,
 });
 
 export default withRouter(connect(mapStateToProps)(Aside));

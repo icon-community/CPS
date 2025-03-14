@@ -117,6 +117,8 @@ const fetchIPFSRetry = async (hash, retries = 10, index = 0) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 6000);
   const ipfsUrlList = [
+    'https://ipfs.icon.community/ipfs/{hash}',
+    'https://{hash}.ipfs.fleek.cool/',
     'https://{hash}.ipfs.dweb.link/',
     'https://{hash}.ipfs.storry.tv/',
     'https://{hash}.ipfs.4everland.io/',
@@ -128,7 +130,6 @@ const fetchIPFSRetry = async (hash, retries = 10, index = 0) => {
     'https://{hash}.ipfs.infura-ipfs.io/',
   ];
 
-  
   const requestOptions = {
     method: 'GET',
     redirect: 'follow',
@@ -141,7 +142,7 @@ const fetchIPFSRetry = async (hash, retries = 10, index = 0) => {
       if (res.ok) return res.json();
       if (retries > 0) {
         index = index + 1;
-        console.log(`Retrying fetchIPFS ${index}`)
+        console.log(`Retrying fetchIPFS ${index}`);
         return fetchIPFSRetry(hash, retries - 1, index);
       } else {
         throw new Error('Error while fetching records from IPFS');
