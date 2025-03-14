@@ -42,10 +42,10 @@ const VotingTabBar = ({
         {tabs.map((tab, index) => (
           <Nav.Item key={index} className={styles.navItem}>
             <NavBarTitle
-              onClick={() => setSelectedTab(tab)}
-              activeCondition={selectedTab === tab}
+              onClick={() => setSelectedTab(tab.value)}
+              activeCondition={selectedTab === tab.value}
             >
-              {tab}{' '}
+              {tab.title}{' '}
               {newIndexList.includes(index) && (
                 <sup style={{ color: 'red', fontWeight: 'normal' }}>New</sup>
               )}
@@ -54,12 +54,6 @@ const VotingTabBar = ({
         ))}
 
         <div style={{ flexGrow: 1 }}></div>
-        {/* <NavBarInputGroup
-          placeholder={placeholder}
-          value={searchText}
-          setValue={setSearchText}
-          maxWidth={maxWidth}
-        /> */}
       </Nav>
     </div>
   );

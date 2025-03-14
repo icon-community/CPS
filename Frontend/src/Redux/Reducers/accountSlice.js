@@ -33,12 +33,13 @@ const accountSlice = createSlice({
     setLoginButtonClicked(state, action) {
       state.loginButtonClicked = action.payload.click;
     },
-    loginRequest(state) { },
-    loginPrepRequest(state) { },
+    loginRequest(state) {},
+    loginPrepRequest(state) {},
     loginSuccess(state, action) {
+      state.isCouncilManager = action.payload.isCouncilManager;
       state.isPrep = action.payload.isPrep;
       state.isRegistered = action.payload.isRegistered;
-      state.votingPRep=action.payload.votingPRep;
+      state.votingPRep = action.payload.votingPRep;
       state.payPenalty = action.payload.payPenalty;
       state.penaltyAmount = IconConverter.toBigNumber(
         action.payload.penaltyAmount,

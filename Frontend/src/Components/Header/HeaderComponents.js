@@ -19,7 +19,7 @@ import EmailConfirmationModal from './EmailConfirmationModal';
 import useVerification from 'Hooks/useVerification';
 import { setUserDataSubmitSuccess } from 'Redux/Reducers/userSlice';
 import { withRouter } from 'react-router-dom';
-import {fetchMaintenanceModeRequest} from 'Redux/Reducers/fundSlice';
+import { fetchMaintenanceModeRequest } from 'Redux/Reducers/fundSlice';
 import { useLogin } from 'Hooks/useLogin';
 import { setTheme } from 'Redux/Reducers/themeSlice';
 import { Switch } from '@headlessui/react';
@@ -31,6 +31,7 @@ const HeaderComponents = ({
   isPrep,
   isRegistered,
   unregisterPrep,
+  isCouncilManager,
   registerPrep,
   period,
   payPenalty,
@@ -115,7 +116,7 @@ const HeaderComponents = ({
           Funding Cycle &nbsp;<span>{periodCount}</span>
         </p>
         {isMaintenanceMode && (
-          <div style={{display:'flex', gap:6, alignItems:'center'}}>
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             <img src={maintainImg} width={40} /> <p>Maintainance Mode</p>
           </div>
         )}
@@ -168,15 +169,19 @@ const HeaderComponents = ({
             </Button>
           )}
 
-        {isPrep && !isRegistered && !payPenalty && !isRemainingTimeZero && (
-          <Button
-            variant='success'
-            onClick={() => setShowUnregisterConfirmationModal(true)}
-            style={{ marginRight: '5px', marginLeft: '5px' }}
-          >
-            Register Prep
-          </Button>
-        )}
+        {!isCouncilManager &&
+          isPrep &&
+          !isRegistered &&
+          !payPenalty &&
+          !isRemainingTimeZero && (
+            <Button
+              variant='success'
+              onClick={() => setShowUnregisterConfirmationModal(true)}
+              style={{ marginRight: '5px', marginLeft: '5px' }}
+            >
+              Register Prep
+            </Button>
+          )}
 
         {/* <span style = {{marginRight: '3px'}} className = "text-primary">Wallet Balance - {walletBalance.toFixed(2)} ICX</span> */}
         {landingPage ? (
@@ -280,6 +285,7 @@ const HeaderComponents = ({
 const mapStateToProps = state => ({
   address: state.account.address,
   isPrep: state.account.isPrep,
+  isCouncilManager: state.account.isCouncilManager,
   isRegistered: state.account.isRegistered,
   payPenalty: state.account.payPenalty,
   walletBalance: state.account.walletBalance,

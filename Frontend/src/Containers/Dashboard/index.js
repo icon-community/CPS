@@ -20,24 +20,27 @@ import {
 import {
   fetchProjectAmountsRequest,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest,
 } from 'Redux/Reducers/proposalSlice';
 import styles from './Dashboard.module.scss';
 import MyProposalCard from 'Components/MyProposalCard';
 import ProposalPendingPRCard from 'Components/ProposalPendingPRCard';
 import SponsorRequestsCard from 'Components/SponsorRequestsCard';
 import VotingCard from 'Components/VotingCard';
-import {
-  fetchExpectedGrantRequest,
-} from 'Redux/Reducers/fundSlice';
+import { fetchExpectedGrantRequest } from 'Redux/Reducers/fundSlice';
 import { setLoginButtonClicked } from 'Redux/Reducers/accountSlice';
 import congratulationsImg from '../../Assets/Images/congratulations.png';
 import congratulationsWhiteImg from '../../Assets/Images/congratulationsWhite.png';
 import UpperCard from 'Containers/Proposals/UpperCard';
 import { useSelector } from 'react-redux';
+import wallet from 'Redux/ICON/FrontEndWallet';
 
 const Dashboard = ({
   payPenaltyRequest,
   payPenalty,
+  pendingCount,
+  isVotingPrep,
+  isCouncilManager,
   period,
   projectAmounts,
   cpfRemainingFunds,
@@ -71,6 +74,7 @@ const Dashboard = ({
   fetchSponsorDepositAmountRequest,
   priorityVote,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest,
 }) => {
   const [showPayPenaltyConfirmationModal, setShowPayPenaltyConfirmationModal] =
     useState(false);
@@ -92,6 +96,16 @@ const Dashboard = ({
   let cardInfo;
   const isDarkTheme = localStorage.getItem('theme') === 'dark';
   // const isDark = useSelector(state => state.theme.isDark);
+
+  useEffect(() => {
+    console.log('length fetching new page');
+    fetchProposalListRequest({
+      status: 'Pending',
+      walletAddress: address || wallet.getAddress(),
+      pageNumber: 1,
+    });
+    // }
+  }, [fetchProposalListRequest, address]);
 
   const getSponsorBondRewardText = amount => {
     if (parseFloat(amount.icx) > 0 && parseFloat(amount.bnUSD) > 0) {
@@ -225,11 +239,7 @@ const Dashboard = ({
   useEffect(() => {
     fetchCPFTreasuryScoreAddressRequest();
     fetchProjectAmountsRequest();
-  }, [
-    fetchProjectAmountsRequest,
-    fetchExpectedGrantRequest,
-
-  ]);
+  }, [fetchProjectAmountsRequest, fetchExpectedGrantRequest]);
 
   useEffect(() => {
     if (cpsTreasuryScoreAddress) {
@@ -312,13 +322,13 @@ const Dashboard = ({
   }, [isPrep, isRegistered, cpsTreasuryScoreAddress, address]);
 
   useEffect(() => {
-    if (isPrep) {
+    if (isCouncilManager || isPrep) {
       fetchPriorityVotingRequest();
     }
-  }, [isPrep]);
+  }, [isCouncilManager, isPrep]);
 
   return address ? (
-    <Container fluid style={{minHeight:'50vh'}}>
+    <Container fluid style={{ minHeight: '50vh' }}>
       {/* < Header title='Dashboard' /> */}
       <Row style={{ marginTop: '30px' }}>
         <Col xs='12'>
@@ -351,13 +361,12 @@ const Dashboard = ({
         <Row style={{ marginTop: '15px' }}>
           <Col xs='12'>
             <Container fluid className={styles.container}>
-            
               <img
                 src={isDarkTheme ? congratulationsWhiteImg : congratulationsImg}
                 style={{ padding: '24px' }}
               />
               <Container
-              fluid
+                fluid
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -418,14 +427,14 @@ const Dashboard = ({
         <Row style={{ marginTop: '15px' }}>
           <Col xs='12'>
             <Container fluid className={styles.container}>
-            <img
+              <img
                 src={isDarkTheme ? congratulationsWhiteImg : congratulationsImg}
                 style={{ padding: '24px' }}
               />
               {isPrep && (
                 <Container style={{ display: 'flex', flexDirection: 'column' }}>
                   <span
-                        className={styles.textContainer}
+                    className={styles.textContainer}
                     style={{
                       fontWeight: '500',
                       fontSize: '1.5rem',
@@ -436,7 +445,7 @@ const Dashboard = ({
                   </span>
 
                   <span
-                        className={styles.textContainer}
+                    className={styles.textContainer}
                     style={{
                       fontWeight: '500',
                       fontSize: '1rem',
@@ -519,8 +528,9 @@ const Dashboard = ({
         </Row>
       )}
       <Row style={{ justifyContent: 'center', padding: '24px 0px' }}>
-        {cardInfo.map(info => (
+        {cardInfo.map((info, index) => (
           <Col
+            key={index}
             lg='3'
             style={{ marginTop: '10px' }}
             className={styles.infoCardContainer}
@@ -540,40 +550,48 @@ const Dashboard = ({
 
       <UpperCard />
 
-      {isPrep && isRegistered && period === 'VOTING' && (
+      {!!isVotingPrep && period === 'VOTING' && (
         <>
           <div className={styles.myProposalHeading}>Pending Votes</div>
 
           <VotingCard
             proposalStatesList={
               period === 'VOTING'
-                ? ['Priority Voting', 'Proposals', 'Progress Reports']
+                ? [
+                    {
+                      title: `Priority Voting ${
+                        !priorityVote && pendingCount > 0 ? '[ 1 ]' : ' '
+                      }`,
+                      value: 'priorityVoting',
+                    },
+                    {
+                      title: `Proposals ${
+                        !!remainingVotesProposal.length
+                          ? `[ ${remainingVotesProposal.length} ]`
+                          : ''
+                      }`,
+                      value: 'proposal',
+                    },
+                    {
+                      title: `Progress Reports  ${
+                        !!remainingVotesPR.length
+                          ? `[ ${remainingVotesPR.length} ]`
+                          : ''
+                      }`,
+                      value: 'progressReport',
+                    },
+                  ]
                 : ['Proposals', 'Progress Reports']
             }
-            initialState={period === 'VOTING' ? 'Priority Voting' : 'Proposals'}
+            initialState={period === 'VOTING' ? 'priorityVoting' : 'proposal'}
             priorityVote={priorityVote}
           />
         </>
       )}
 
-      {/* {
-                (!isPrep || !isRegistered) && period === 'APPLICATION' &&
-                <>
-                    <div className={styles.myProposalHeading}>Proposals Pending Progress Report</div>
+      <MyProposalCard />
 
-                    <ProposalPendingPRCard />
-                </>
-            } */}
-
-      {
-        <>
-          {/* <div className={styles.myProposalHeading}>My Proposals</div> */}
-
-          <MyProposalCard />
-        </>
-      }
-
-      {isPrep && isRegistered && (
+      {!isCouncilManager && isPrep && (
         <>
           <div className={styles.myProposalHeading}>Sponsored Projects</div>
 
@@ -618,11 +636,14 @@ const Dashboard = ({
 const mapStateToProps = state => ({
   payPenalty: state.account.payPenalty,
   period: state.period.period,
+  pendingCount: state.proposals.pendingCount,
   previousPeriod: state.period.previousPeriod,
   projectAmounts: state.proposals.projectAmounts,
   cpfRemainingFunds: state.fund.cpfRemainingFunds,
   cpfScoreAddress: state.fund.cpfScoreAddress,
   isPrep: state.account.isPrep,
+  isCouncilManager: state.account.isCouncilManager,
+  isVotingPrep: state.account.votingPRep,
   isRegistered: state.account.isRegistered,
   myProposalList: state.proposals.myProposalList,
   expectedGrant: state.fund.expectedGrant,
@@ -657,6 +678,7 @@ const mapDispatchToProps = {
   fetchSponsorBondRequest,
   fetchSponsorDepositAmountRequest,
   fetchPriorityVotingRequest,
+  fetchProposalListRequest,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

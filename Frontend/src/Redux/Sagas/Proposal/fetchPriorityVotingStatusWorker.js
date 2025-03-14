@@ -5,8 +5,9 @@ import {
   fetchPriorityVotingSuccess,
 } from '../../Reducers/proposalSlice';
 
-function* fetchPriorityVotingStatusWorker({ payload }) {
+function* fetchPriorityVotingStatusWorker() {
   try {
+    console.log('fetchPriorityVotingStatusWorker');
     const getAddress = state => state.account.address;
     const walletAddress = yield select(getAddress);
     const response = yield call(callKeyStoreWallet, {

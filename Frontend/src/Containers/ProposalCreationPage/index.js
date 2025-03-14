@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {findFutureMonth} from '../../utils'
+import { findFutureMonth } from '../../utils';
 import {
   Row,
   Card,
@@ -234,7 +234,7 @@ const ProposalCreationPage = ({
   const [remainingBudget, setRemainingBudget] = React.useState(0);
   let [prepList, setPrepList] = React.useState([]);
 
-  const {IconConverter} = IconService;
+  const { IconConverter } = IconService;
 
   useEffect(() => {
     fetchCPFRemainingFundRequest();
@@ -333,14 +333,14 @@ const ProposalCreationPage = ({
   // }, [proposal.milestones, proposal.projectDuration]);
 
   useEffect(() => {
-    const totalMonths =
-      proposal.milestones.reduce(
-        (sum, milestone) => sum + parseInt(milestone.completionPeriod),
-        0,
-      );
+    const totalMonths = proposal.milestones.reduce(
+      (sum, milestone) => sum + parseInt(milestone.completionPeriod),
+      0,
+    );
     setTotalNumberOfMonthsInMilestone(totalMonths);
 
-    const milestoneBudget = proposal.totalBudget - (prePaymentPercentage * proposal.totalBudget);
+    const milestoneBudget =
+      proposal.totalBudget - prePaymentPercentage * proposal.totalBudget;
     setTotalMilestoneBudget(milestoneBudget);
     const inputBudget = proposal.milestones.reduce(
       (sum, milestone) => sum + Number(milestone.budget),
@@ -352,8 +352,8 @@ const ProposalCreationPage = ({
     // console.log(totalInputBudget, totalMilestoneBudget);
     if (proposal.milestones.length < 1) {
       document
-      .getElementById('milestones')
-      .setCustomValidity(`Please add milestones`);
+        .getElementById('milestones')
+        .setCustomValidity(`Please add milestones`);
     } else if (parseInt(inputBudget) !== parseInt(milestoneBudget)) {
       document
         .getElementById('milestones')
@@ -362,8 +362,14 @@ const ProposalCreationPage = ({
             milestoneBudget || 0
           } bnUSD)`,
         );
-    } else if (parseInt(proposal.milestones[proposal.milestones.length-1].completionPeriod) !== parseInt(proposal.projectDuration)) {
-      document.getElementById('milestones').setCustomValidity(
+    } else if (
+      parseInt(
+        proposal.milestones[proposal.milestones.length - 1].completionPeriod,
+      ) !== parseInt(proposal.projectDuration)
+    ) {
+      document
+        .getElementById('milestones')
+        .setCustomValidity(
           `The total duration in milestones should equal to the project duration (currently ${
             proposal.projectDuration || 0
           } months)`,
@@ -371,7 +377,7 @@ const ProposalCreationPage = ({
     } else {
       document.getElementById('milestones').setCustomValidity(``);
     }
-  }, [proposal.totalBudget, proposal.milestones,proposal.projectDuration]);
+  }, [proposal.totalBudget, proposal.milestones, proposal.projectDuration]);
 
   useEffect(() => {
     const minimumNumberOfWords = 10;
@@ -760,7 +766,9 @@ const ProposalCreationPage = ({
                           <tr style={{ height: '100%' }} key={index}>
                             <td>{milestone.name}</td>
                             <td>
-                              {`${findFutureMonth(milestone.completionPeriod)} after ${milestone.completionPeriod} month`}
+                              {`${findFutureMonth(
+                                milestone.completionPeriod,
+                              )} after ${milestone.completionPeriod} month`}
                               {milestone.completionPeriod > 1 && 's'}
                             </td>
                             <td>{milestone.budget} bnUSD</td>
@@ -797,14 +805,19 @@ const ProposalCreationPage = ({
                           </tr>
                         ))}
                         <tr>
-                          <td colspan='2'>
-                            <p>{`Pre-Payment Amount (${prePaymentPercentage*100}% of Budget)`}</p>
+                          <td colSpan='2'>
+                            <p>{`Pre-Payment Amount (${
+                              prePaymentPercentage * 100
+                            }% of Budget)`}</p>
                           </td>
 
                           <td>
                             <p>
                               {/* <b>300 bnUSD</b> */}
-                              <b>{prePaymentPercentage*proposal.totalBudget} bnUSD</b>
+                              <b>
+                                {prePaymentPercentage * proposal.totalBudget}{' '}
+                                bnUSD
+                              </b>
                             </p>
                           </td>
                         </tr>
@@ -816,7 +829,12 @@ const ProposalCreationPage = ({
                             <b></b>
                           </td>
                           <td>
-                            <b>{totalInputBudget + (prePaymentPercentage*proposal.totalBudget)} bnUSD</b>
+                            <b>
+                              {totalInputBudget +
+                                prePaymentPercentage *
+                                  proposal.totalBudget}{' '}
+                              bnUSD
+                            </b>
                           </td>
                         </tr>
                       </>
@@ -1000,14 +1018,16 @@ const ProposalCreationPage = ({
         onHide={() => setSubmissionConfirmationShow(false)}
         heading={'Proposal Submission Confirmation'}
         size='mdxl'
-
         onConfirm={() => {
           submitProposal({
-            proposal: {...proposal,milestones:proposal.milestones.map((x)=>{
-              const {budget, ...rest} = x;
-              const updatedBudget = IconConverter.toBigNumber(budget*1e18);
-              return {budget:IconConverter.toHex(updatedBudget),...rest};
-            })  }
+            proposal: {
+              ...proposal,
+              milestones: proposal.milestones.map(x => {
+                const { budget, ...rest } = x;
+                const updatedBudget = IconConverter.toBigNumber(budget * 1e18);
+                return { budget: IconConverter.toHex(updatedBudget), ...rest };
+              }),
+            },
           });
         }}
       >
@@ -1054,8 +1074,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = state => ({
-  sponsorBondPercentage:state.preps.sponsorBondPercentage,
-  prePaymentPercentage:state.fund.prePaymentPercentage,
+  sponsorBondPercentage: state.preps.sponsorBondPercentage,
+  prePaymentPercentage: state.fund.prePaymentPercentage,
   submittingProposal: state.proposals.submittingProposal,
   preps: state.preps.preps,
   walletAddress: state.account.address,

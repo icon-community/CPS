@@ -16,9 +16,9 @@ export default function* loginPrepWorker() {
       },
     });
 
-    // if(payload.payload.address === 'hx215757b0edf862d2e4c10a0677b4b6944724c724') {
-    //   response = '0x01';
-    // }
+    const isCouncilManager = !!parseInt(
+      IconConverter.toBigNumber(response.isCouncilManager),
+    );
     const isPrep = !!parseInt(IconConverter.toBigNumber(response.isPRep));
     const isRegistered = !!parseInt(
       IconConverter.toBigNumber(response.isRegistered),
@@ -27,17 +27,18 @@ export default function* loginPrepWorker() {
       IconConverter.toBigNumber(response.payPenalty),
     );
     const penaltyAmount = parseInt(response.penaltyAmount);
-    const votingPRep= parseInt(response.votingPRep);
+    const votingPRep = parseInt(response.votingPRep);
     const walletBalance = yield iconService.getBalance(walletAddress).execute();
 
     yield put(
       loginSuccess({
+        isCouncilManager,
         isPrep,
         isRegistered,
         payPenalty,
         penaltyAmount,
         walletBalance,
-        votingPRep
+        votingPRep,
       }),
     );
   } catch (error) {

@@ -15,8 +15,8 @@ const PARAMS = {
   sponsorDepositAmount: 'sponsor_deposit_amount',
   sponsorDepositStatus: 'sponsor_deposit_status',
   proposalHash: 'ipfs_hash',
-  isMilestone:'isMilestone',
-  milestoneCount:'milestoneCount',
+  isMilestone: 'isMilestone',
+  milestoneCount: 'milestoneCount',
   approvedVotes: 'approved_votes',
   abstainedVotes: 'abstained_votes',
   abstainVoters: 'abstain_voters',
@@ -44,7 +44,7 @@ export const VotingPhase = {
 };
 
 const initialState = {
-  selectedProposalDetailsbyHash:{},
+  selectedProposalDetailsbyHash: {},
   numberOfSubmittedProposals: 29,
   totalSubmittedProposalBudget: 1240000,
 
@@ -160,8 +160,8 @@ const initialState = {
   sponsorRequestProposalTitle: '',
   sponsorRequestProposal: null,
   selectedProposal: {},
-  selectedProposalForMigration:{},
-  selectedProposalDetailForProgressReport:{},
+  selectedProposalForMigration: {},
+  selectedProposalDetailForProgressReport: {},
   token: '',
   error: '',
   changeVote: false,
@@ -341,6 +341,9 @@ const proposalSlice = createSlice({
       state.totalCount[action.payload.status] = IconConverter.toNumber(
         action.payload.response.count,
       );
+      state.pendingCount = IconConverter.toNumber(
+        action.payload.response.count,
+      );
 
       return;
     },
@@ -438,7 +441,7 @@ const proposalSlice = createSlice({
       state.error = true;
     },
     fetchSelectedProposalForProgressReportRequest() {
-      console.log("reached here")
+      console.log('reached here');
       return;
     },
 
@@ -609,12 +612,14 @@ const proposalSlice = createSlice({
     },
 
     fetchMigrationProposalByAddressSuccess(state, action) {
-      console.log("migration proposal list",action.payload.response)
-      state.migrationProposalByAddress = action.payload.response?.data.map(proposal => ({
-        proposalTitle: proposal[PARAMS.proposalTitle],
-        ipfsKey: proposal[PARAMS.proposalHash],
-        contributorAddress:proposal[PARAMS.contributorAddress]
-      }));
+      console.log('migration proposal list', action.payload.response);
+      state.migrationProposalByAddress = action.payload.response?.data.map(
+        proposal => ({
+          proposalTitle: proposal[PARAMS.proposalTitle],
+          ipfsKey: proposal[PARAMS.proposalHash],
+          contributorAddress: proposal[PARAMS.contributorAddress],
+        }),
+      );
       return;
     },
 
@@ -902,8 +907,8 @@ const proposalSlice = createSlice({
         _status: proposal[PARAMS.status],
         _proposal_title: proposal[PARAMS.proposalTitle],
         _contributor_address: proposal[PARAMS.contributorAddress],
-        _milestone_count:proposal[PARAMS.milestoneCount],
-        _is_milestone:proposal[PARAMS.isMilestone],
+        _milestone_count: proposal[PARAMS.milestoneCount],
+        _is_milestone: proposal[PARAMS.isMilestone],
         sponsorAddress: proposal[PARAMS.sponsorAddress],
         // budget: parseInt(proposal[PARAMS.totalBudget]),
         budget: IconConverter.toBigNumber(
